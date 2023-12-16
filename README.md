@@ -58,6 +58,24 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
+## develop
+
+```bash
+# nest g [文件类型] [文件名] [文件目录]
+# 创建模块
+nest g mo posts
+# 创建控制器
+nest g co posts
+# 创建服务类
+nest g service posts
+# 快速创建 Controller、Service、Module 以及 DTO
+nest g resource posts
+# 创建过滤器
+nest g filter core/filter/http-exception
+# 创建拦截器
+nest g interceptor core/interceptor/transform
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
