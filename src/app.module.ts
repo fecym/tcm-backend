@@ -5,7 +5,7 @@ import { PostsModule } from './posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // @nestjs/config依赖于dotenv，可以通过key=value形式配置环境变量，项目会默认加载根目录下的.env文件，我们只需在app.module.ts中引入ConfigModule，使用ConfigModule.forRoot()方法即可，然后ConfigService读取相关的配置变量。
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import envConfig from '../config/env';
+import envConfig, { isProd } from '../config/env';
 // import { PostsEntity } from './posts/posts.entity';
 import { UserModule } from './user/user.module';
 import { HerbsModule } from './herbs/herbs.module';
@@ -16,6 +16,7 @@ import { CategoryModule } from './category/category.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
 import { LoggerMiddleware } from './core/middleware/logger.middleware';
 import { LoggerModule } from './logger/logger.module';
+import { AcuPointModule } from './acu-point/acu-point.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { LoggerModule } from './logger/logger.module';
         database: configService.get('DB_DATABASE', 'tcm_dev'), //数据库名
         timezone: '+08:00', //服务器上配置的时区
         // 空数据库，随便折腾，数据库中有数据时， 建议一定要谨慎点，建议关闭
-        synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
+        synchronize: !isProd, //根据实体自动创建数据库表， 生产环境建议关闭
+        logging: !isProd,
       }),
     }),
     AuthModule,
@@ -49,6 +51,7 @@ import { LoggerModule } from './logger/logger.module';
     CategoryModule,
     DictionaryModule,
     LoggerModule,
+    AcuPointModule,
   ],
   controllers: [AppController],
   providers: [AppService],

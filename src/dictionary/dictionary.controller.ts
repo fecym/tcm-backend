@@ -30,4 +30,10 @@ export class DictionaryController {
   getCategory() {
     return this.dictionaryService.getCategory();
   }
+
+  @ApiOperation({ summary: '用户角色' })
+  @Get('/user/role')
+  getUserRole() {
+    return this.dictionaryService.getUserRole();
+  }
 }

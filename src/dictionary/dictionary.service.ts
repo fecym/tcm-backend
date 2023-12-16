@@ -5,6 +5,7 @@ import {
   herbTasteTypes,
   herbToxicTypes,
 } from '../herbs/entities/herb.entity';
+import { roleTypes } from '../user/entities/user.entity';
 
 @Injectable()
 export class DictionaryService {
@@ -22,5 +23,9 @@ export class DictionaryService {
 
   getCategory() {
     return herbCategoryTypes.map((label) => ({ label, value: label }));
+  }
+
+  getUserRole() {
+    return roleTypes.map((label) => ({ label, value: label }));
   }
 }

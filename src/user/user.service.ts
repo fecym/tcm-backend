@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -7,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { compareSync } from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserPageQueryDto } from './dto/user-query.dto';
-import { genLikeWhere } from '../utils';
+import { genLikeWhere, setPassword } from '../utils';
 
 @Injectable()
 export class UserService {
@@ -24,14 +29,17 @@ export class UserService {
     if (existUser) {
       throw new HttpException('用户名已存在', HttpStatus.BAD_REQUEST);
     }
+    if (!createUser.password) {
+      createUser.password = '000000';
+    }
     const newUser = await this.userRepository.create(createUser);
     // save 才会插入数据
     return await this.userRepository.save(newUser);
     // return await this.userRepository.findOne({ where: { username } });
   }
 
-  async findOne(id) {
-    return await this.userRepository.findOne({ where: { id } });
+  findOne(id) {
+    return this.userRepository.findOne({ where: { id } });
   }
 
   async findAll(query: UserPageQueryDto) {
@@ -61,6 +69,25 @@ export class UserService {
     } catch (e) {
       console.log(e, '===');
     }
+  }
+
+  async updatePassword(id, data) {
+    const exist = await this.findOne(id);
+    console.log(exist, 'existUser');
+    if (!exist) {
+      throw new HttpException(`用户不存在`, 401);
+    }
+    console.log(
+      exist,
+      data,
+      this.comparePassword(data.password, exist.password),
+    );
+    if (!this.comparePassword(data.password, exist.password)) {
+      throw new BadRequestException('密码错误！');
+    }
+
+    exist.password = setPassword(data.newPassword);
+    return this.userRepository.save(exist);
   }
 
   async update(id, updateUserDto: UpdateUserDto) {

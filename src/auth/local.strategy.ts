@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { PassportStrategy } from '@nestjs/passport';
 import { IStrategyOptions, Strategy } from 'passport-local';
 import { UserEntity } from 'src/user/entities/user.entity';
+import { setPassword } from "../utils";
 
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(

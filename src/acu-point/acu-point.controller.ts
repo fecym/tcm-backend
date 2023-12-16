@@ -1,0 +1,34 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { AcuPointService } from './acu-point.service';
+import { CreateAcuPointDto } from './dto/create-acu-point.dto';
+import { UpdateAcuPointDto } from './dto/update-acu-point.dto';
+
+@Controller('acu-point')
+export class AcuPointController {
+  constructor(private readonly acuPointService: AcuPointService) {}
+
+  @Post()
+  create(@Body() createAcuPointDto: CreateAcuPointDto) {
+    return this.acuPointService.create(createAcuPointDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.acuPointService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.acuPointService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateAcuPointDto: UpdateAcuPointDto) {
+    return this.acuPointService.update(+id, updateAcuPointDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.acuPointService.remove(+id);
+  }
+}

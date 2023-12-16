@@ -70,6 +70,16 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @ApiOperation({ summary: '修改密码' })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiBearerAuth()
+  @Roles('author', 'root')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Put()
+  updatePassword(@Req() req, @Body() body) {
+    return this.userService.updatePassword(req.user.id, body);
+  }
+
   @ApiOperation({ summary: '更新用户信息' })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiBearerAuth()

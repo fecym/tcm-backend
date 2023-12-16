@@ -2,12 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { HerbEntity } from '../../herbs/entities/herb.entity';
 import { transformDateTime } from '../../utils';
+import { AcuPointEntity } from '../../acu-point/entities/acu-point.entity';
 
 @Entity('meridian')
 export class MeridianEntity {
@@ -36,7 +38,17 @@ export class MeridianEntity {
   @ManyToMany(() => HerbEntity, (herb) => herb.meridianList)
   herbList: Array<HerbEntity>;
 
-  // 考虑穴位
+  // 关联穴位
+  @ManyToMany(() => AcuPointEntity, (acuPoint) => acuPoint.meridianList)
+  acuPointList: Array<AcuPointEntity>;
+
+  // @ManyToMany(() => AcuPointEntity, (acuPoint) => acuPoint.meridianList)
+  // @JoinTable({
+  //   name: 'acu_point_meridian',
+  //   joinColumns: [{ name: 'acu_point_id' }],
+  //   inverseJoinColumns: [{ name: 'meridian_id' }],
+  // })
+  // acuPointList: Array<AcuPointEntity>;
 
   // 备注
   @Column({ nullable: true })

@@ -5,9 +5,9 @@ import {
   BeforeInsert,
   OneToMany,
 } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import { HerbEntity } from '../../herbs/entities/herb.entity';
+import { setPassword } from '../../utils';
 
 export const roleTypes = ['root', 'author', 'visitor'];
 
@@ -62,6 +62,6 @@ export class UserEntity {
 
   @BeforeInsert()
   async encryptPwd() {
-    this.password = await bcrypt.hashSync(this.password, 10);
+    this.password = setPassword(this.password);
   }
 }

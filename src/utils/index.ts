@@ -1,4 +1,5 @@
 import * as dayjs from 'dayjs';
+import { hashSync } from 'bcryptjs';
 
 export function isEmpty(value) {
   if (Array.isArray(value)) return value.length === 0;
@@ -32,4 +33,8 @@ export function genLikeWhere(qb, query, queryBuilder, keys = []) {
 
 export function transformDateTime(value: Date): string {
   return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
+}
+
+export function setPassword(password: string) {
+  return hashSync(password, 10);
 }
