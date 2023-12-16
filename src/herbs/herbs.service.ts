@@ -1,26 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateShennongHerbDto } from './dto/create-shennong-herb.dto';
-import { UpdateShennongHerbDto } from './dto/update-shennong-herb.dto';
+import { CreateHerbDto } from './dto/create-herb.dto';
+import { UpdateHerbDto } from './dto/update-herb.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ShennongHerbEntity } from './entities/shennong-herb.entity';
+import { HerbEntity } from './entities/herb.entity';
 import { MeridianService } from '../meridian/meridian.service';
 import { genLikeWhere, genWhere, isEmpty } from '../utils';
-import {
-  QueryPageShennongHerbDto,
-  QueryShennongHerbDto,
-} from './dto/query-shennong-herb.dto';
+import { QueryPageHerbDto, QueryHerbDto } from './dto/query-herb.dto';
 
 @Injectable()
-export class ShennongHerbsService {
+export class HerbsService {
   constructor(
-    @InjectRepository(ShennongHerbEntity)
-    private herbRepository: Repository<ShennongHerbEntity>,
+    @InjectRepository(HerbEntity)
+    private herbRepository: Repository<HerbEntity>,
     private meridianService: MeridianService,
   ) {}
 
-  async create(user, createShennongHerbDto: CreateShennongHerbDto) {
-    const { meridianIds } = createShennongHerbDto;
+  async create(
+    user,
+    createHerbDto: Omit<CreateHerbDto, 'meridians' | 'meridianString'>,
+  ) {
+    const { meridianIds } = createHerbDto;
     // const exist = await this.herbRepository.findOne({
     //   where: { name },
     // });
@@ -37,16 +37,17 @@ export class ShennongHerbsService {
     }
 
     const data = {
-      ...createShennongHerbDto,
+      ...createHerbDto,
       meridianList,
       author: user.id,
     };
 
+    console.log(data, '???');
     const newHerb = await this.herbRepository.create(data);
     return (await this.herbRepository.save(newHerb)).id;
   }
 
-  async findAll(query: QueryShennongHerbDto) {
+  async findAll(query: QueryHerbDto) {
     const qb = this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
@@ -58,7 +59,7 @@ export class ShennongHerbsService {
     return list.map((x) => x.toResponseObject());
   }
 
-  async findPage(query: QueryPageShennongHerbDto) {
+  async findPage(query: QueryPageHerbDto) {
     const qb = await this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
@@ -94,7 +95,7 @@ export class ShennongHerbsService {
     return list.map((x) => x.toResponseObject());
   }
 
-  async update(id, updateHerbDto: UpdateShennongHerbDto, user) {
+  async update(id, updateHerbDto: UpdateHerbDto, user) {
     const exist = await this.herbRepository.findOne({
       where: { id },
     });

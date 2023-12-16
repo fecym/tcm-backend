@@ -12,6 +12,7 @@ const converter = new showdown.Converter();
 @Injectable()
 export class MDMiddleware implements NestMiddleware {
   // 参数是固定的Request/Response/nest
+  // eslint-disable-next-line @typescript-eslint/ban-types
   use(req: any, res: Response, next: Function) {
     const { content } = req.body;
     if (content) {
@@ -35,12 +36,14 @@ function toText(html, len = 30) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getToc(html: string) {
   // 这个功能能前端做还是前端做
   // decodeEntities防止中文转化为unicdoe
   const $ = cheerio.load(html, { decodeEntities: false });
 
   // 用count生成自定义id
+  // eslint-disable-next-line prefer-const
   let hArr = [],
     highestLvl,
     count = 0;
@@ -60,12 +63,13 @@ function getToc(html: string) {
   console.log('hArr:', hArr);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function toTree(flatArr) {
-  let result = [];
-  let stack = []; // 栈数组
+  const result = [];
+  const stack = []; // 栈数组
   let collector = result; // 收集器
 
-  flatArr.forEach((item, index) => {
+  flatArr.forEach((item) => {
     if (stack.length === 0) {
       // 第一次循环
       stack.push(item);
@@ -77,11 +81,12 @@ function toTree(flatArr) {
       // 改变收集器为当前级别的子集
       collector = item.children;
     } else {
-      let topStack = stack[stack.length - 1];
+      const topStack = stack[stack.length - 1];
 
       if (topStack.hLevel >= item.hLevel) {
         // 说明不能作为其子集
-        let outTrack = stack.pop(); // 移除栈顶元素
+        stack.pop();
+        // 移除栈顶元素
         stack.push(item);
 
         // 当前

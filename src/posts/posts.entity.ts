@@ -80,18 +80,18 @@ export class PostsEntity {
   })
   tags: TagEntity[];
 
-  @Column({ type: 'timestamp', name: 'publish_time', default: null })
+  @Column({ type: 'datetime', name: 'publish_time', default: null })
   publishTime: Date;
 
   @Column({
-    type: 'timestamp',
+    type: 'datetime',
     name: 'create_time',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createTime: Date;
 
   @Column({
-    type: 'timestamp',
+    type: 'datetime',
     name: 'update_time',
     default: () => 'CURRENT_TIMESTAMP',
   })

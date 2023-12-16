@@ -1,8 +1,8 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreateShennongHerbDto } from './create-shennong-herb.dto';
+import { CreateHerbDto } from './create-herb.dto';
 import { MeridianEntity } from '../../meridian/entities/meridian.entity';
 
-export class QueryShennongHerbDto extends PartialType(CreateShennongHerbDto) {
+export class QueryHerbDto extends PartialType(CreateHerbDto) {
   @ApiProperty({ description: '名称', required: false })
   name: string;
 
@@ -22,9 +22,7 @@ export class QueryShennongHerbDto extends PartialType(CreateShennongHerbDto) {
   category: string;
 }
 
-export class QueryPageShennongHerbDto extends PartialType(
-  QueryShennongHerbDto,
-) {
+export class QueryPageHerbDto extends PartialType(QueryHerbDto) {
   @ApiProperty({ description: '分页', required: false, default: 1 })
   page: number;
 

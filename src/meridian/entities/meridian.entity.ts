@@ -6,12 +6,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ShennongHerbEntity } from '../../shennong-herbs/entities/shennong-herb.entity';
+import { HerbEntity } from '../../herbs/entities/herb.entity';
+import { transformDateTime } from '../../utils';
 
 @Entity('meridian')
 export class MeridianEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ length: 20 })
   name: string; // 全称
@@ -26,20 +27,32 @@ export class MeridianEntity {
   })
   type: number;
 
-  @ManyToMany(() => ShennongHerbEntity, (herb) => herb.meridianList)
-  herbList: Array<ShennongHerbEntity>;
+  @Column({ length: 4, comment: '子午流注时辰', nullable: true })
+  midnightNoon: string;
+
+  @Column({ length: 30, comment: '灵龟八法', nullable: true })
+  eightAcuPoint: string;
+
+  @ManyToMany(() => HerbEntity, (herb) => herb.meridianList)
+  herbList: Array<HerbEntity>;
 
   // 考虑穴位
 
+  // 备注
+  @Column({ nullable: true })
+  remark: string;
+
   @CreateDateColumn({
     name: 'create_time',
-    type: 'timestamp',
+    type: 'datetime',
+    transformer: { to: transformDateTime, from: transformDateTime },
   })
   createTime: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
     name: 'update_time',
+    transformer: { to: transformDateTime, from: transformDateTime },
   })
   updateTime: Date;
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
@@ -8,12 +8,14 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import envConfig from '../config/env';
 // import { PostsEntity } from './posts/posts.entity';
 import { UserModule } from './user/user.module';
-import { ShennongHerbsModule } from './shennong-herbs/shennong-herbs.module';
+import { HerbsModule } from './herbs/herbs.module';
 import { AuthModule } from './auth/auth.module';
 import { MeridianModule } from './meridian/meridian.module';
 import { TagModule } from './tag/tag.module';
 import { CategoryModule } from './category/category.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
+import { LoggerMiddleware } from './core/middleware/logger.middleware';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -32,7 +34,7 @@ import { DictionaryModule } from './dictionary/dictionary.module';
         port: configService.get<number>('DB_PORT', 3306), // 端口号
         username: configService.get('DB_USER', 'root'), // 用户名
         password: configService.get('DB_PASSWORD', '1314asd.'), // 密码
-        database: configService.get('DB_DATABASE', 'tcm-dev'), //数据库名
+        database: configService.get('DB_DATABASE', 'tcm_dev'), //数据库名
         timezone: '+08:00', //服务器上配置的时区
         // 空数据库，随便折腾，数据库中有数据时， 建议一定要谨慎点，建议关闭
         synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
@@ -41,13 +43,18 @@ import { DictionaryModule } from './dictionary/dictionary.module';
     AuthModule,
     UserModule,
     PostsModule,
-    ShennongHerbsModule,
+    HerbsModule,
     MeridianModule,
     TagModule,
     CategoryModule,
     DictionaryModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

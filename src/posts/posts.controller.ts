@@ -40,8 +40,8 @@ export class PostsController {
   @Get('/list')
   async findAll(
     @Query() query,
-    @Query('size') size: number,
-    @Query('page') page: number,
+    // @Query('size') size: number,
+    // @Query('page') page: number,
   ): Promise<PostsRo> {
     return await this.postsService.findAll(query);
   }

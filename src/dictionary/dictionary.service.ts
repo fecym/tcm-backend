@@ -4,7 +4,7 @@ import {
   herbPropTypes,
   herbTasteTypes,
   herbToxicTypes,
-} from '../shennong-herbs/entities/shennong-herb.entity';
+} from '../herbs/entities/herb.entity';
 
 @Injectable()
 export class DictionaryService {

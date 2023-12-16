@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MeridianService } from './meridian.service';
 import { CreateMeridianDto } from './dto/create-meridian.dto';
@@ -16,11 +17,14 @@ import { QueryMeridianDto } from './dto/query-meridian.dto';
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard, Roles } from '../auth/role.guard';
+import { CreateTimeInterceptor } from '../core/interceptor/create-time.interceptor';
+import { SelectDto, transformSelect } from '../dto/select.dto';
 
 @ApiTags('十二正经和奇经八脉')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller('meridian')
+@UseInterceptors(CreateTimeInterceptor)
 export class MeridianController {
   constructor(private readonly meridianService: MeridianService) {}
 
@@ -30,6 +34,13 @@ export class MeridianController {
   @Post()
   create(@Body() createMeridianDto: CreateMeridianDto) {
     return this.meridianService.create(createMeridianDto);
+  }
+
+  @ApiOperation({ summary: '下拉' })
+  @Get('select')
+  async findSelect(@Query() query: QueryMeridianDto): Promise<SelectDto[]> {
+    const entities = await this.meridianService.findAll(query);
+    return entities.map((entity) => transformSelect(entity));
   }
 
   @ApiOperation({ summary: '列表' })
@@ -52,7 +63,7 @@ export class MeridianController {
     @Param('id') id: string,
     @Body() updateMeridianDto: UpdateMeridianDto,
   ) {
-    return this.meridianService.update(+id, updateMeridianDto);
+    return this.meridianService.update(id, updateMeridianDto);
   }
 
   @ApiOperation({ summary: '删除' })
@@ -60,6 +71,6 @@ export class MeridianController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.meridianService.remove(+id);
+    return this.meridianService.remove(id);
   }
 }

@@ -1,7 +1,7 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreateShennongHerbDto } from './create-shennong-herb.dto';
+import { CreateHerbDto } from './create-herb.dto';
 
-export class InfoHerbDto extends PartialType(CreateShennongHerbDto) {
+export class InfoHerbDto extends PartialType(CreateHerbDto) {
   @ApiProperty({ description: '名称', required: false })
   name: string;
 

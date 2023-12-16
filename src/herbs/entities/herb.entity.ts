@@ -16,9 +16,9 @@ export const herbTasteTypes = ['淡', '酸', '苦', '甘', '辛', '咸'];
 export const herbToxicTypes = ['无毒', '有毒', '大毒'];
 export const herbCategoryTypes = ['上经', '中经', '下经'];
 
-@Entity('shennong_herb')
-export class ShennongHerbEntity {
-  @PrimaryGeneratedColumn()
+@Entity('herb')
+export class HerbEntity {
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column({ length: 20, unique: true })
@@ -27,25 +27,25 @@ export class ShennongHerbEntity {
   @Column({ nullable: true, length: 20 })
   alias: string; // 其他名称
 
-  @Column('simple-enum', {
+  @Column('enum', {
     enum: herbPropTypes,
     default: '平',
   })
   nature: string; // 性
 
-  @Column('simple-enum', {
+  @Column('enum', {
     enum: herbTasteTypes,
     default: '淡',
   })
   taste: string; // 味
 
-  @Column('simple-enum', {
+  @Column('enum', {
     enum: herbToxicTypes,
     default: '无毒',
   })
   toxic: string; // 是否有毒
 
-  @Column('simple-enum', {
+  @Column('enum', {
     enum: herbCategoryTypes,
     default: '上经',
   })
@@ -53,8 +53,8 @@ export class ShennongHerbEntity {
 
   @ManyToMany(() => MeridianEntity, (meridian) => meridian.herbList)
   @JoinTable({
-    name: 'shennong_herb_meridian',
-    joinColumns: [{ name: 'shennong_herb_id' }],
+    name: 'herb_meridian',
+    joinColumns: [{ name: 'herb_id' }],
     inverseJoinColumns: [{ name: 'meridian_id' }],
   })
   meridianList: Array<MeridianEntity>; // 归经
@@ -73,14 +73,14 @@ export class ShennongHerbEntity {
 
   @Column({
     name: 'create_time',
-    type: 'timestamp',
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createTime: Date;
 
   @Column({
     name: 'update_time',
-    type: 'timestamp',
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   updateTime: Date;

@@ -5,9 +5,9 @@ import {
   herbPropTypes,
   herbTasteTypes,
   herbToxicTypes,
-} from '../entities/shennong-herb.entity';
+} from '../entities/herb.entity';
 
-export class CreateShennongHerbDto {
+export class CreateHerbDto {
   @ApiProperty({ description: '名称' })
   @IsNotEmpty()
   name: string;

@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { transformDateTime } from '../../utils';
 
 @Entity('category')
 export class CategoryEntity {
@@ -20,16 +21,18 @@ export class CategoryEntity {
   posts: Array<PostsEntity>;
 
   @CreateDateColumn({
-    type: 'timestamp',
+    type: 'datetime',
     comment: '创建时间',
     name: 'create_time',
+    transformer: { to: transformDateTime, from: transformDateTime },
   })
   createTime: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
+    type: 'datetime',
     comment: '更新时间',
     name: 'update_time',
+    transformer: { to: transformDateTime, from: transformDateTime },
   })
   updateTime: Date;
 }

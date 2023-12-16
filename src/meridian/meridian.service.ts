@@ -23,7 +23,7 @@ export class MeridianService {
       throw new HttpException('经络已存在', HttpStatus.BAD_REQUEST);
     }
     const newMeridian = await this.meridianRepository.create(createMeridianDto);
-    return await this.meridianRepository.save(newMeridian);
+    return this.meridianRepository.save(newMeridian);
   }
 
   async findAll(query: QueryMeridianDto) {
@@ -32,7 +32,7 @@ export class MeridianService {
       .orderBy('meridian.create_time', 'DESC');
     genWhere(qb, query, 'meridian', ['type']);
     genLikeWhere(qb, query, 'meridian', ['name', 'alias']);
-    return await qb.getMany();
+    return qb.getMany();
   }
 
   findOne(id) {

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import { ShennongHerbEntity } from '../../shennong-herbs/entities/shennong-herb.entity';
+import { HerbEntity } from '../../herbs/entities/herb.entity';
 
 export const roleTypes = ['root', 'author', 'visitor'];
 
@@ -42,12 +42,12 @@ export class UserEntity {
   })
   role: string;
 
-  @OneToMany(() => ShennongHerbEntity, (herb) => herb.author)
-  herbList: ShennongHerbEntity[];
+  @OneToMany(() => HerbEntity, (herb) => herb.author)
+  herbList: HerbEntity[];
 
   @Column({
     name: 'create_time',
-    type: 'timestamp',
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createTime: Date;
@@ -55,7 +55,7 @@ export class UserEntity {
   @Exclude()
   @Column({
     name: 'update_time',
-    type: 'timestamp',
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   updateTime: Date;

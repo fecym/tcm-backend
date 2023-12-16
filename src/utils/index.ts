@@ -1,3 +1,5 @@
+import * as dayjs from 'dayjs';
+
 export function isEmpty(value) {
   if (Array.isArray(value)) return value.length === 0;
   return value === null || value === undefined || value == '';
@@ -26,4 +28,8 @@ export function genLikeWhere(qb, query, queryBuilder, keys = []) {
       qb.where(`${queryBuilder}.${key} LIKE :${key}`, { [key]: query[key] });
     }
   });
+}
+
+export function transformDateTime(value: Date): string {
+  return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
 }

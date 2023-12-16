@@ -5,6 +5,8 @@ import { TransformInterceptor } from './core/interceptor/transform/transform.int
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+// import { LoggerMiddleware } from './core/middleware/logger.middleware';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api'); // 设置全局路由前缀

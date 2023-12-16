@@ -7,6 +7,6 @@ export class QueryMeridianDto {
 
   @ApiProperty({ description: '类型', nullable: true, required: false })
   @IsOptional()
-  @IsIn([1, 2])
-  type: number;
+  @IsIn([1, 2, '1', '2'])
+  type: number | string;
 }
