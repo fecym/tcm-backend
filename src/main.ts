@@ -4,11 +4,12 @@ import { HttpExceptionFilter } from './core/filter/http-exception/http-exception
 import { TransformInterceptor } from './core/interceptor/transform/transform.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
+import { ConfigService } from '@nestjs/config';
 // import { LoggerMiddleware } from './core/middleware/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   app.setGlobalPrefix('api'); // 设置全局路由前缀
   // 注册全局过滤器拦截器
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -28,7 +29,9 @@ async function bootstrap() {
 
   app.enableCors();
 
-  await app.listen(3000);
+  const port = configService.get('PORT');
+
+  await app.listen(port);
 }
 
 bootstrap();

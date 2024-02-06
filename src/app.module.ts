@@ -34,7 +34,7 @@ import { AcuPointModule } from './acu-point/acu-point.module';
         host: configService.get('DB_HOST', 'localhost'), // 主机，默认为localhost
         port: configService.get<number>('DB_PORT', 3306), // 端口号
         username: configService.get('DB_USER', 'root'), // 用户名
-        password: configService.get('DB_PASSWORD', '1314asd.'), // 密码
+        password: configService.get('DB_PASSWD', '1314asd.'), // 密码
         database: configService.get('DB_DATABASE', 'tcm_dev'), //数据库名
         timezone: '+08:00', //服务器上配置的时区
         // 空数据库，随便折腾，数据库中有数据时， 建议一定要谨慎点，建议关闭

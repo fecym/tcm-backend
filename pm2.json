@@ -1,0 +1,16 @@
+{
+  "apps": [
+    {
+      "name": "tcm-server",
+      "script": "dist/src/main.js",
+      "exp_backoff_restart_delay": 100,
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "instances": 1,
+      "watch": false,
+      "merge_logs": true,
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
