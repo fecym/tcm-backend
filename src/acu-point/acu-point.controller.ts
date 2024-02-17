@@ -19,16 +19,16 @@ export class AcuPointController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.acuPointService.findOne(+id);
+    return this.acuPointService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAcuPointDto: UpdateAcuPointDto) {
-    return this.acuPointService.update(+id, updateAcuPointDto);
+    return this.acuPointService.update(id, updateAcuPointDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.acuPointService.remove(+id);
+    return this.acuPointService.remove(id);
   }
 }

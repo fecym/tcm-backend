@@ -26,7 +26,7 @@ export class HerbsController {
   constructor(private readonly herbsService: HerbsService) {}
 
   @ApiOperation({ summary: '添加本草' })
-  @Roles('admin', 'root', 'author')
+  @Roles('1', '2')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createHerbDto: CreateHerbDto, @Req() req) {
@@ -52,7 +52,7 @@ export class HerbsController {
   }
 
   @ApiOperation({ summary: '编辑本草' })
-  @Roles('admin', 'root', 'author')
+  @Roles('1', '2')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put(':id')
   update(
@@ -60,14 +60,14 @@ export class HerbsController {
     @Body() updateHerbDto: UpdateHerbDto,
     @Req() req,
   ) {
-    return this.herbsService.update(+id, updateHerbDto, req.user);
+    return this.herbsService.update(id, updateHerbDto, req.user);
   }
 
   @ApiOperation({ summary: '删除本草' })
-  @Roles('admin', 'root', 'author')
+  @Roles('1', '2')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.herbsService.remove(+id);
+    return this.herbsService.remove(id);
   }
 }

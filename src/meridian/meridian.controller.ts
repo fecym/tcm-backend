@@ -29,7 +29,7 @@ export class MeridianController {
   constructor(private readonly meridianService: MeridianService) {}
 
   @ApiOperation({ summary: '创建' })
-  @Roles('admin', 'root')
+  @Roles('1', '2')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createMeridianDto: CreateMeridianDto) {
@@ -56,7 +56,7 @@ export class MeridianController {
   }
 
   @ApiOperation({ summary: '更新' })
-  @Roles('admin', 'root')
+  @Roles('1')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put(':id')
   update(
@@ -67,7 +67,7 @@ export class MeridianController {
   }
 
   @ApiOperation({ summary: '删除' })
-  @Roles('admin', 'root')
+  @Roles('1')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {

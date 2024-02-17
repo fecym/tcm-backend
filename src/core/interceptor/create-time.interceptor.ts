@@ -14,6 +14,7 @@ export class CreateTimeInterceptor implements NestInterceptor {
     const { method } = request;
     // 新增
     if (method === 'POST') {
+      delete dataWithoutTimeFields.id;
       dataWithoutTimeFields.createTime = new Date();
       dataWithoutTimeFields.updateTime = new Date();
     }

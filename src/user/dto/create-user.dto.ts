@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsIn, IsOptional } from 'class-validator';
-import { roleTypes } from '../entities/user.entity';
+import { IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import { RoleEnum } from "../../enum";
 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名' })
@@ -13,6 +13,6 @@ export class CreateUserDto {
 
   @ApiProperty({ description: '用户角色' })
   @IsOptional()
-  @IsIn(roleTypes)
-  role: string;
+  @IsEnum(RoleEnum)
+  role: RoleEnum;
 }

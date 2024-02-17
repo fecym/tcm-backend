@@ -42,6 +42,14 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
+  findByUsername(username: string): Promise<UserEntity> {
+    return this.userRepository.findOne({ where: { username } });
+  }
+
+  findByMobile(mobile: string): Promise<UserEntity> {
+    return this.userRepository.findOne({ where: { mobile } });
+  }
+
   async findAll(query: UserPageQueryDto) {
     try {
       const qb = await this.userRepository

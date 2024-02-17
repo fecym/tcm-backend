@@ -39,7 +39,7 @@ export class HerbsService {
     const data = {
       ...createHerbDto,
       meridianList,
-      author: user.id,
+      createUser: user.id,
     };
 
     console.log(data, '???');
@@ -51,7 +51,7 @@ export class HerbsService {
     const qb = this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
-      .leftJoinAndSelect('herb.author', 'user')
+      .leftJoinAndSelect('herb.createUser', 'user')
       .orderBy('herb.create_time', 'DESC');
     genWhere(qb, query, 'herb', ['nature', 'taste', 'toxic', 'category']);
     genLikeWhere(qb, query, 'herb', ['name', 'alias', 'primaryIndication']);
@@ -63,7 +63,7 @@ export class HerbsService {
     const qb = await this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
-      .leftJoinAndSelect('herb.author', 'user')
+      .leftJoinAndSelect('herb.createUser', 'user')
       .orderBy('herb.create_time', 'DESC');
     genWhere(qb, query, 'herb', ['nature', 'taste', 'toxic', 'category']);
     genLikeWhere(qb, query, 'herb', ['name', 'alias', 'primaryIndication']);
@@ -79,7 +79,7 @@ export class HerbsService {
     const qb = this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
-      .leftJoinAndSelect('herb.author', 'user')
+      .leftJoinAndSelect('herb.createUser', 'user')
       .where('herb.id=:id', { id });
     // .where('herb.id=:id')
     // .setParameter('id', id);

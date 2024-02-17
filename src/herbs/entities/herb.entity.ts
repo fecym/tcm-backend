@@ -86,10 +86,10 @@ export class HerbEntity {
   updateTime: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
-  author: UserEntity;
+  createUser: UserEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
-  editor: UserEntity;
+  updateUser: UserEntity;
 
   toResponseObject(): InfoHerbDto {
     const obj: any = { ...this };
@@ -98,11 +98,11 @@ export class HerbEntity {
         return { name: item.name, id: item.id, alias: item.alias };
       });
     }
-    if (this.author?.id) {
-      obj.authorId = this.author.id;
-      obj.authorName = this.author.nickname || this.author.username;
+    if (this.createUser?.id) {
+      obj.createUserId = this.createUser.id;
+      obj.createUserName = this.createUser.nickname || this.createUser.username;
     }
-    delete obj.author;
+    delete obj.createUser;
     delete obj.meridianList;
     return obj;
   }

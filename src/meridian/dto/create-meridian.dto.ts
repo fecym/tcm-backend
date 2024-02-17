@@ -3,7 +3,7 @@ import { IsNotEmpty, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class CreateMeridianDto {
   @ApiProperty({ description: '全称' })
-  @IsNotEmpty({ message: '请输入全称' })
+  @IsNotEmpty({ message: '请输入经络名称' })
   name: string;
 
   @ApiProperty({ description: '别名' })

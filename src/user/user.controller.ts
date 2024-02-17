@@ -44,7 +44,7 @@ export class UserController {
   @ApiOperation({ summary: '获取用户列表' })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiBearerAuth()
-  // @Roles('author', 'root')
+  // @Roles('1', '2')
   // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseGuards(AuthGuard('jwt'))
   @Get('list')
@@ -73,7 +73,6 @@ export class UserController {
   @ApiOperation({ summary: '修改密码' })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiBearerAuth()
-  @Roles('author', 'root')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put()
   updatePassword(@Req() req, @Body() body) {
@@ -83,7 +82,6 @@ export class UserController {
   @ApiOperation({ summary: '更新用户信息' })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiBearerAuth()
-  @Roles('author', 'root')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -92,7 +90,7 @@ export class UserController {
 
   @ApiOperation({ summary: '删除用户' })
   @ApiBearerAuth()
-  // @Roles('author', 'root')
+  @Roles('1')
   // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')

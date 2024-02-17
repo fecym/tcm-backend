@@ -12,15 +12,15 @@ export class AcuPointService {
     return `This action returns all acuPoint`;
   }
 
-  findOne(id: number) {
+  findOne(id) {
     return `This action returns a #${id} acuPoint`;
   }
 
-  update(id: number, updateAcuPointDto: UpdateAcuPointDto) {
+  update(id, updateAcuPointDto: UpdateAcuPointDto) {
     return `This action updates a #${id} acuPoint`;
   }
 
-  remove(id: number) {
+  remove(id) {
     return `This action removes a #${id} acuPoint`;
   }
 }
