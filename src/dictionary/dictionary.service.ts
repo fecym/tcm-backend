@@ -5,7 +5,7 @@ import {
   herbTasteTypes,
   herbToxicTypes,
 } from '../herbs/entities/herb.entity';
-import { roleTypes } from '../user/entities/user.entity';
+import { RoleEnum } from '../enum';
 
 @Injectable()
 export class DictionaryService {
@@ -26,6 +26,8 @@ export class DictionaryService {
   }
 
   getUserRole() {
-    return roleTypes.map((label) => ({ label, value: label }));
+    return Object.keys(RoleEnum)
+      .filter((key) => !isNaN(RoleEnum[key]))
+      .map((key) => ({ label: key, value: RoleEnum[key] }));
   }
 }
