@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { roleTypes } from '../entities/user.entity';
+import { RoleEnum } from '../../enum';
 
 export class UserInfoDto {
   @ApiProperty({ description: '用户名' })
@@ -19,7 +19,11 @@ export class UserInfoDto {
   @ApiProperty({ description: '手机号', required: false })
   mobile: string;
 
-  @ApiProperty({ description: '角色', enum: roleTypes, default: 'visitor' })
+  @ApiProperty({
+    description: '角色',
+    enum: RoleEnum,
+    default: RoleEnum.visitor,
+  })
   role: string;
 
   // @ApiProperty({ description: '创建时间' })

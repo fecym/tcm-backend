@@ -8,6 +8,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { HerbEntity } from '../../herbs/entities/herb.entity';
 import { setPassword } from '../../utils';
+import { RoleEnum } from '../../enum';
 
 export const roleTypes = ['root', 'author', 'visitor'];
 
@@ -33,16 +34,16 @@ export class UserEntity {
   @Column({ nullable: true })
   email: string | null;
 
-  @Column({ length: 11, nullable: true })
+  @Column({ length: 11, nullable: true, unique: true })
   mobile: string | null;
 
   @Column('simple-enum', {
-    enum: roleTypes,
-    default: 'visitor',
+    enum: RoleEnum,
+    default: RoleEnum.visitor,
   })
-  role: string;
+  role: RoleEnum;
 
-  @OneToMany(() => HerbEntity, (herb) => herb.author)
+  @OneToMany(() => HerbEntity, (herb) => herb.createUser)
   herbList: HerbEntity[];
 
   @Column({

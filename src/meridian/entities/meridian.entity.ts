@@ -29,10 +29,20 @@ export class MeridianEntity {
   })
   type: number;
 
-  @Column({ length: 4, comment: '子午流注时辰', nullable: true })
+  @Column({
+    length: 4,
+    comment: '子午流注时辰',
+    nullable: true,
+    name: 'midnight_noon',
+  })
   midnightNoon: string;
 
-  @Column({ length: 30, comment: '灵龟八法', nullable: true })
+  @Column({
+    length: 30,
+    comment: '灵龟八法',
+    nullable: true,
+    name: 'eight_acu_point',
+  })
   eightAcuPoint: string;
 
   @ManyToMany(() => HerbEntity, (herb) => herb.meridianList)

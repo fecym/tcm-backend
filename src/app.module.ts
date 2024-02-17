@@ -17,6 +17,8 @@ import { DictionaryModule } from './dictionary/dictionary.module';
 import { LoggerMiddleware } from './core/middleware/logger.middleware';
 import { LoggerModule } from './logger/logger.module';
 import { AcuPointModule } from './acu-point/acu-point.module';
+import { VehicleModule } from './vehicle/vehicle.module';
+import { VehicleMaintainModule } from './vehicle-maintain/vehicle-maintain.module';
 
 @Module({
   imports: [
@@ -52,6 +54,8 @@ import { AcuPointModule } from './acu-point/acu-point.module';
     DictionaryModule,
     LoggerModule,
     AcuPointModule,
+    VehicleModule,
+    VehicleMaintainModule,
   ],
   controllers: [AppController],
   providers: [AppService],

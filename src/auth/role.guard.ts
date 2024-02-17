@@ -1,9 +1,9 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   SetMetadata,
-  UnauthorizedException,
 } from '@nestjs/common';
 // import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
@@ -27,9 +27,12 @@ export class RolesGuard implements CanActivate {
     if (!user) {
       return false;
     }
-    const hasRoles = roles.some((role) => role === user.role);
+    if (user.role === 1) {
+      return true;
+    }
+    const hasRoles = roles.some((role) => +role === user.role);
     if (!hasRoles) {
-      throw new UnauthorizedException('您没有权限');
+      throw new ForbiddenException('您没有权限');
     }
     return hasRoles;
   }
