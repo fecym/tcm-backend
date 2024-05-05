@@ -28,7 +28,7 @@ export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
   @ApiOperation({ summary: '创建车辆' })
-  @Roles('1', '3')
+  @Roles('1', '4')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createVehicleDto: CreateVehicleDto) {
@@ -59,7 +59,7 @@ export class VehicleController {
 
   @ApiOperation({ summary: '更新车辆信息' })
   @ApiBearerAuth()
-  @Roles('1', '3')
+  @Roles('1', '4')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
@@ -68,7 +68,7 @@ export class VehicleController {
 
   @ApiOperation({ summary: '删除车辆' })
   @ApiBearerAuth()
-  @Roles('1', '3')
+  @Roles('1', '4')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {

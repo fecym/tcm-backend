@@ -12,6 +12,9 @@ export class QueryVehicleMaintainDto extends PartialType(
 
   @ApiProperty({ description: '维修说明', required: false })
   remark: string;
+
+  @ApiProperty({ description: '关键字', required: false })
+  keyword: string;
 }
 
 export class QueryPageVehicleMaintainDto extends PartialType(

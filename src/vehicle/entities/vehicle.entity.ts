@@ -23,7 +23,7 @@ export class VehicleEntity {
   })
   licensePlate: string;
 
-  @Column({ length: 24, comment: '车辆名称' })
+  @Column({ length: 24, comment: '车辆名称', default: '', nullable: true })
   name: string;
 
   @Column({ length: 24, comment: '车辆类型', name: 'vehicle_type_name' })

@@ -32,11 +32,11 @@ export class VehicleMaintainController {
   ) {}
 
   @ApiOperation({ summary: '创建维修工单' })
-  @Roles('1', '3')
+  @Roles('1', '4')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(
-    @Req() req,
+    @Req() req: any,
     @Body() createVehicleMaintainDto: CreateVehicleMaintainDto,
   ) {
     return this.vehicleMaintainService.create(
@@ -58,12 +58,25 @@ export class VehicleMaintainController {
     return this.vehicleMaintainService.findPage(query);
   }
 
+  @ApiOperation({ summary: '查询车辆维系次数' })
+  @Get('count/:id')
+  getCountByVehicleId(@Param('id') id: string) {
+    return this.vehicleMaintainService.getCountByVehicleId(id);
+  }
+
+  @ApiOperation({ summary: '查询车辆最近一次维系情况' })
+  @Get('last/:id')
+  getLastByVehicleId(@Param('id') id: string) {
+    return this.vehicleMaintainService.getLastByVehicleId(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.vehicleMaintainService.findOne(id);
   }
 
   @Put(':id')
+  @Roles('1', '4')
   update(
     @Param('id') id: string,
     @Req() req,
@@ -77,6 +90,7 @@ export class VehicleMaintainController {
   }
 
   @Delete(':id')
+  @Roles('1', '4')
   remove(@Param('id') id: string) {
     return this.vehicleMaintainService.remove(id);
   }

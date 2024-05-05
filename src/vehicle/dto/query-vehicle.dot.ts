@@ -9,6 +9,9 @@ export class QueryVehicleDto {
 
   @ApiProperty({ description: '车主姓名', required: false })
   vehicleOwnerName: string;
+
+  @ApiProperty({ description: '关键字', required: false })
+  keyword: string;
 }
 
 export class QueryPageVehicleDto extends PartialType(QueryVehicleDto) {

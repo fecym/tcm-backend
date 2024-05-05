@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { YesNo } from "../../enum";
+import { YesNo } from '../../enum';
 
 export class CreateVehicleMaintainDto {
   @ApiProperty({ description: '维修工单名称', required: false })
-  @IsNotEmpty()
   name: string;
 
   @ApiProperty({ description: '维修车辆' })
@@ -53,6 +52,5 @@ export class CreateVehicleMaintainDto {
   amount: number;
 
   @ApiProperty({ description: '维修说明', required: false })
-  @IsNotEmpty()
   remark: string;
 }

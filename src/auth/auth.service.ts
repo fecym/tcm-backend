@@ -16,7 +16,7 @@ export class AuthService {
     return this.jwtService.sign(user);
   }
 
-  async login(user: Partial<UserEntity>) {
+  login(user: Partial<UserEntity>) {
     const token = this.createToken({
       id: user.id,
       username: user.username,

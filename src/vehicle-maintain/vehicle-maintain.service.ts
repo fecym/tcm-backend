@@ -43,31 +43,43 @@ export class VehicleMaintainService {
   }
 
   async findAll(query: QueryVehicleMaintainDto) {
-    const qb = await this.vehicleMaintainRepository
+    query.keyword ??= '';
+    const qb = this.vehicleMaintainRepository
       .createQueryBuilder('vehicle_maintain')
-      .orderBy('vehicle_maintain.create_time', 'DESC');
-    genWhere(qb, query, 'vehicle_maintain', ['licensePlate']);
-    genLikeWhere(qb, query, 'vehicle_maintain', [
-      'vehicleOwnerName',
-      'vehicleTypeName',
-    ]);
+      .leftJoinAndSelect('vehicle_maintain.vehicle', 'maintain')
+      .orderBy('vehicle_maintain.create_time', 'DESC')
+      .where('vehicle_maintain.name LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orWhere('vehicle_maintain.maintainUser LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orWhere('maintain.licensePlate LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      });
     return qb.getMany();
   }
 
   async findPage(query: QueryPageVehicleMaintainDto) {
-    const qb = await this.vehicleMaintainRepository
+    query.keyword ??= '';
+    const qb = this.vehicleMaintainRepository
       .createQueryBuilder('vehicle_maintain')
       // .leftJoinAndSelect('vehicle_maintain.createUser', 'user')
       .leftJoinAndSelect('vehicle_maintain.vehicle', 'maintain')
-      .orderBy('vehicle_maintain.create_time', 'DESC');
+      .orderBy('vehicle_maintain.create_time', 'DESC')
+      .where('vehicle_maintain.name LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orWhere('vehicle_maintain.customerName LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orWhere('maintain.licensePlate LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      });
     if (query.vehicleId) {
       qb.where(`maintain.id = :vehicleId`, { vehicleId: query.vehicleId });
     }
-    genLikeWhere(qb, query, 'vehicle_maintain', [
-      'licensePlate',
-      'vehicleOwnerName',
-      'vehicleTypeName',
-    ]);
+    // genLikeWhere(qb, query, 'vehicle_maintain', ['licensePlate', 'vehicleOwnerName', 'vehicleTypeName',]);
     const count = await qb.getCount();
     const { page = 1, size = 10 } = query;
     qb.limit(size);
@@ -75,6 +87,21 @@ export class VehicleMaintainService {
     const list = await qb.getMany();
     return { list: list.map((x) => x.toResponseObject()), count };
     // return { list, count };
+  }
+
+  getCountByVehicleId(id: string) {
+    return this.vehicleMaintainRepository
+      .createQueryBuilder('vehicle_maintain')
+      .where('vehicle_maintain.vehicle = :id', { id })
+      .getCount();
+  }
+
+  getLastByVehicleId(id: string) {
+    return this.vehicleMaintainRepository
+      .createQueryBuilder('vehicle_maintain')
+      .where('vehicle_maintain.vehicle = :id', { id })
+      .orderBy('vehicle_maintain.create_time', 'DESC')
+      .getOne();
   }
 
   findOne(id: string) {

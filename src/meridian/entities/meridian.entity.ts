@@ -16,7 +16,7 @@ export class MeridianEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 20 })
+  @Column({ length: 20, default: null })
   name: string; // 全称
 
   @Column({ length: 20 })
