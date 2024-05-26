@@ -44,6 +44,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "showdown": "^2.1.0",
+    "solarlunar": "^2.0.7",
     "swagger-ui-express": "^5.0.0",
     "typeorm": "^0.3.17",
     "winston": "^3.11.0"

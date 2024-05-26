@@ -19,6 +19,8 @@ import { LoggerModule } from './logger/logger.module';
 import { AcuPointModule } from './acu-point/acu-point.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { VehicleMaintainModule } from './vehicle-maintain/vehicle-maintain.module';
+import { LunarController } from './lunar/lunar.controller';
+import { LunarService } from './lunar/lunar.service';
 
 @Module({
   imports: [
@@ -57,8 +59,8 @@ import { VehicleMaintainModule } from './vehicle-maintain/vehicle-maintain.modul
     VehicleModule,
     VehicleMaintainModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, LunarController],
+  providers: [AppService, LunarService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
