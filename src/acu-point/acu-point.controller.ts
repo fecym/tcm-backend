@@ -1,8 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { AcuPointService } from './acu-point.service';
 import { CreateAcuPointDto } from './dto/create-acu-point.dto';
 import { UpdateAcuPointDto } from './dto/update-acu-point.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles, RolesGuard } from '../auth/role.guard';
 
+@ApiTags('穴位')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('1', '2')
 @Controller('acu-point')
 export class AcuPointController {
   constructor(private readonly acuPointService: AcuPointService) {}
@@ -23,7 +39,10 @@ export class AcuPointController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAcuPointDto: UpdateAcuPointDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateAcuPointDto: UpdateAcuPointDto,
+  ) {
     return this.acuPointService.update(id, updateAcuPointDto);
   }
 

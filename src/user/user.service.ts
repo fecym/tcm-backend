@@ -12,7 +12,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { compareSync } from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserPageQueryDto } from './dto/user-query.dto';
-import { genLikeWhere, setPassword } from '../utils';
+import {
+  genLikeWhereConditions,
+  queryPage,
+  removeRecord,
+  setPassword,
+} from '../utils';
 
 @Injectable()
 export class UserService {
@@ -56,24 +61,15 @@ export class UserService {
         .createQueryBuilder('user')
         .orderBy('user.create_time', 'DESC');
 
-      genLikeWhere(qb, query, 'user', [
+      genLikeWhereConditions(qb, query, 'user', [
         'username',
         'nickname',
         'mobile',
         'email',
       ]);
 
-      // qb.where('user.nickname = :email', { email: 'query.email' });
-      // qb.where(`user.nickname LIKE :username`, { username: query.username });
-
-      // console.log(qb.expressionMap.wheres, '???');
-      const count = await qb.getCount();
-      const { page = 1, size = 10 } = query;
-      qb.limit(size);
-      qb.offset(size * (page - 1));
-
-      const list = await qb.getMany();
-      return { list, count };
+      const { list, count } = await queryPage(qb, query);
+      return { list: list.map((x) => x.toResponseObject()), count };
     } catch (e) {
       console.log(e, '===');
     }
@@ -83,13 +79,8 @@ export class UserService {
     const exist = await this.findOne(id);
     console.log(exist, 'existUser');
     if (!exist) {
-      throw new HttpException(`用户不存在`, 401);
+      throw new HttpException(`用户不存在`, HttpStatus.NOT_FOUND);
     }
-    console.log(
-      exist,
-      data,
-      this.comparePassword(data.password, exist.password),
-    );
     if (!this.comparePassword(data.password, exist.password)) {
       throw new BadRequestException('密码错误！');
     }
@@ -102,19 +93,14 @@ export class UserService {
     const exist = await this.findOne(id);
     console.log(exist, 'existUser');
     if (!exist) {
-      throw new HttpException(`用户不存在`, 401);
+      throw new HttpException(`用户不存在`, HttpStatus.NOT_FOUND);
     }
     const updateUser = this.userRepository.merge(exist, updateUserDto);
     return this.userRepository.save(updateUser);
   }
 
-  async remove(id: string) {
-    const exist = await this.userRepository.findOne({ where: { id } });
-    if (!exist) {
-      throw new HttpException(`用户不存在`, 401);
-    }
-    await this.userRepository.remove(exist);
-    return true;
+  remove(id: string) {
+    return removeRecord(id, this.userRepository);
   }
 
   comparePassword(password, libPassword) {

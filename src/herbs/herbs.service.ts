@@ -5,7 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HerbEntity } from './entities/herb.entity';
 import { MeridianService } from '../meridian/meridian.service';
-import { genLikeWhere, genWhere, isEmpty } from '../utils';
+import {
+  genLikeWhereConditions,
+  genWhereConditions,
+  isEmpty,
+  queryPage,
+  removeRecord,
+} from '../utils';
 import { QueryPageHerbDto, QueryHerbDto } from './dto/query-herb.dto';
 
 @Injectable()
@@ -53,8 +59,17 @@ export class HerbsService {
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
       .leftJoinAndSelect('herb.createUser', 'user')
       .orderBy('herb.create_time', 'DESC');
-    genWhere(qb, query, 'herb', ['nature', 'taste', 'toxic', 'category']);
-    genLikeWhere(qb, query, 'herb', ['name', 'alias', 'primaryIndication']);
+    genWhereConditions(qb, query, 'herb', [
+      'nature',
+      'taste',
+      'toxic',
+      'category',
+    ]);
+    genLikeWhereConditions(qb, query, 'herb', [
+      'name',
+      'alias',
+      'primaryIndication',
+    ]);
     const list = await qb.getMany();
     return list.map((x) => x.toResponseObject());
   }
@@ -65,13 +80,18 @@ export class HerbsService {
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
       .leftJoinAndSelect('herb.createUser', 'user')
       .orderBy('herb.create_time', 'DESC');
-    genWhere(qb, query, 'herb', ['nature', 'taste', 'toxic', 'category']);
-    genLikeWhere(qb, query, 'herb', ['name', 'alias', 'primaryIndication']);
-    const count = await qb.getCount();
-    const { page = 1, size = 10 } = query;
-    qb.limit(size);
-    qb.offset(size * (page - 1));
-    const list = await qb.getMany();
+    genWhereConditions(qb, query, 'herb', [
+      'nature',
+      'taste',
+      'toxic',
+      'category',
+    ]);
+    genLikeWhereConditions(qb, query, 'herb', [
+      'name',
+      'alias',
+      'primaryIndication',
+    ]);
+    const { list, count } = await queryPage(qb, query);
     return { list: list.map((x) => x.toResponseObject()), count };
   }
 
@@ -100,7 +120,7 @@ export class HerbsService {
       where: { id },
     });
     if (!exist) {
-      throw new HttpException(`id为${id}的本草不存在`, 401);
+      throw new HttpException(`id为${id}的本草不存在`, HttpStatus.NOT_FOUND);
     }
     const { meridianIds } = updateHerbDto;
 
@@ -122,12 +142,7 @@ export class HerbsService {
     return (await this.herbRepository.save(updateHerb)).id;
   }
 
-  async remove(id) {
-    const exist = await this.herbRepository.findOne({ where: { id } });
-    if (!exist) {
-      throw new HttpException(`id为${id}的本草不存在`, 401);
-    }
-    await this.herbRepository.remove(exist);
-    return true;
+  remove(id) {
+    return removeRecord(id, this.herbRepository);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -43,6 +44,7 @@ export class VehicleEntity {
 
   // 创建人
   @ManyToOne(() => UserEntity, (user) => user.nickname)
+  @JoinColumn({ name: 'user_id' })
   createUser: UserEntity;
 
   @Column({

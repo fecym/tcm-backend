@@ -21,6 +21,8 @@ import { VehicleModule } from './vehicle/vehicle.module';
 import { VehicleMaintainModule } from './vehicle-maintain/vehicle-maintain.module';
 import { LunarController } from './lunar/lunar.controller';
 import { LunarService } from './lunar/lunar.service';
+import { ExpenseModule } from './expense/expense.module';
+import { FriendModule } from './friend/friend.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { LunarService } from './lunar/lunar.service';
     AcuPointModule,
     VehicleModule,
     VehicleMaintainModule,
+    ExpenseModule,
+    FriendModule,
   ],
   controllers: [AppController, LunarController],
   providers: [AppService, LunarService],

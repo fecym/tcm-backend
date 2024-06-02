@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty } from 'class-validator';
-import { YesNo } from '../../enum';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import { RelationshipEnum, YesNoEnum } from '../../enum';
 
 export class CreateVehicleMaintainDto {
   @ApiProperty({ description: '维修工单名称', required: false })
@@ -22,9 +22,14 @@ export class CreateVehicleMaintainDto {
   @ApiProperty({ description: '结束时间', required: false })
   endTime: Date;
 
-  @ApiProperty({ description: '是否外出维修', required: false })
-  @IsEnum(YesNo)
-  isOutRepair: YesNo;
+  @ApiProperty({
+    description: '是否外出维修',
+    enum: YesNoEnum,
+    default: YesNoEnum.Yes,
+  })
+  @IsOptional()
+  @IsEnum(YesNoEnum)
+  isOutRepair: YesNoEnum;
 
   @ApiProperty({ description: '维修地点', required: false })
   repairAddress: string;

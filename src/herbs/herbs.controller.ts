@@ -20,14 +20,13 @@ import { QueryPageHerbDto, QueryHerbDto } from './dto/query-herb.dto';
 
 @ApiTags('神农本草经')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('1', '2')
 @Controller('herbs')
 export class HerbsController {
   constructor(private readonly herbsService: HerbsService) {}
 
   @ApiOperation({ summary: '添加本草' })
-  @Roles('1', '2')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createHerbDto: CreateHerbDto, @Req() req) {
     return this.herbsService.create(req.user, createHerbDto);
@@ -52,8 +51,6 @@ export class HerbsController {
   }
 
   @ApiOperation({ summary: '编辑本草' })
-  @Roles('1', '2')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
@@ -64,8 +61,6 @@ export class HerbsController {
   }
 
   @ApiOperation({ summary: '删除本草' })
-  @Roles('1', '2')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.herbsService.remove(id);

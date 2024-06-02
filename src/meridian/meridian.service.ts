@@ -5,7 +5,11 @@ import { QueryMeridianDto } from './dto/query-meridian.dto';
 import { MeridianEntity } from './entities/meridian.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { genLikeWhere, genWhere } from '../utils';
+import {
+  genLikeWhereConditions,
+  genWhereConditions,
+  removeRecord,
+} from '../utils';
 
 @Injectable()
 export class MeridianService {
@@ -30,8 +34,8 @@ export class MeridianService {
     const qb = await this.meridianRepository
       .createQueryBuilder('meridian')
       .orderBy('meridian.create_time', 'DESC');
-    genWhere(qb, query, 'meridian', ['type']);
-    genLikeWhere(qb, query, 'meridian', ['name', 'alias']);
+    genWhereConditions(qb, query, 'meridian', ['type']);
+    genLikeWhereConditions(qb, query, 'meridian', ['name', 'alias']);
     return qb.getMany();
   }
 
@@ -49,7 +53,7 @@ export class MeridianService {
     });
     console.log(existMeridian, 'existMeridian');
     if (!existMeridian) {
-      throw new HttpException(`id为${id}的经络不存在`, 401);
+      throw new HttpException(`id为${id}的经络不存在`, HttpStatus.NOT_FOUND);
     }
     const updateMeridian = this.meridianRepository.merge(
       existMeridian,
@@ -58,12 +62,7 @@ export class MeridianService {
     return this.meridianRepository.save(updateMeridian);
   }
 
-  async remove(id) {
-    const exist = await this.meridianRepository.findOne({ where: { id } });
-    if (!exist) {
-      throw new HttpException(`id为${id}的经络不存在`, 401);
-    }
-    await this.meridianRepository.remove(exist);
-    return true;
+  remove(id) {
+    return removeRecord(id, this.meridianRepository);
   }
 }
