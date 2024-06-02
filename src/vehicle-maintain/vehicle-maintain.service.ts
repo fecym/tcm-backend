@@ -7,7 +7,7 @@ import {
 } from './dto/query-vehicle-maintain.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { genLikeWhere, genWhere, isEmpty } from '../utils';
+import { genWhereConditions, isEmpty, queryPage, removeRecord } from '../utils';
 import { VehicleMaintainEntity } from './entities/vehicle-maintain.entity';
 import { VehicleService } from '../vehicle/vehicle.service';
 
@@ -42,49 +42,68 @@ export class VehicleMaintainService {
     return this.vehicleMaintainRepository.save(vehicleMaintain);
   }
 
-  async findAll(query: QueryVehicleMaintainDto) {
+  async findAll(query: QueryVehicleMaintainDto, user) {
     query.keyword ??= '';
+    console.log(query, 'query');
     const qb = this.vehicleMaintainRepository
       .createQueryBuilder('vehicle_maintain')
-      .leftJoinAndSelect('vehicle_maintain.vehicle', 'maintain')
-      .orderBy('vehicle_maintain.create_time', 'DESC')
-      .where('vehicle_maintain.name LIKE :keyword', {
-        keyword: `%${query.keyword}%`,
-      })
-      .orWhere('vehicle_maintain.maintainUser LIKE :keyword', {
-        keyword: `%${query.keyword}%`,
-      })
-      .orWhere('maintain.licensePlate LIKE :keyword', {
-        keyword: `%${query.keyword}%`,
-      });
-    return qb.getMany();
-  }
-
-  async findPage(query: QueryPageVehicleMaintainDto) {
-    query.keyword ??= '';
-    const qb = this.vehicleMaintainRepository
-      .createQueryBuilder('vehicle_maintain')
-      // .leftJoinAndSelect('vehicle_maintain.createUser', 'user')
-      .leftJoinAndSelect('vehicle_maintain.vehicle', 'maintain')
-      .orderBy('vehicle_maintain.create_time', 'DESC')
+      .leftJoinAndSelect('vehicle_maintain.vehicle', 'vehicle')
+      .innerJoinAndSelect(
+        'vehicle_maintain.createUser',
+        'user',
+        'user.id = :userId',
+        {
+          userId: user.id,
+        },
+      )
       .where('vehicle_maintain.name LIKE :keyword', {
         keyword: `%${query.keyword}%`,
       })
       .orWhere('vehicle_maintain.customerName LIKE :keyword', {
         keyword: `%${query.keyword}%`,
       })
-      .orWhere('maintain.licensePlate LIKE :keyword', {
+      .orWhere('vehicle.licensePlate LIKE :keyword', {
         keyword: `%${query.keyword}%`,
-      });
+      })
+      .orderBy('vehicle_maintain.create_time', 'DESC');
+
+    return qb.getMany();
+  }
+
+  async findPage(query: QueryPageVehicleMaintainDto, user) {
+    query.keyword ??= '';
+    const qb = this.vehicleMaintainRepository
+      .createQueryBuilder('vehicle_maintain')
+      .innerJoinAndSelect(
+        'vehicle_maintain.createUser',
+        'user',
+        'user.id = :userId',
+        {
+          userId: user.id,
+        },
+      )
+      .leftJoinAndSelect('vehicle_maintain.vehicle', 'vehicle')
+      .where('vehicle_maintain.name LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orWhere('vehicle_maintain.customerName LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orWhere('vehicle.licensePlate LIKE :keyword', {
+        keyword: `%${query.keyword}%`,
+      })
+      .orderBy('vehicle_maintain.create_time', 'DESC');
     if (query.vehicleId) {
-      qb.where(`maintain.id = :vehicleId`, { vehicleId: query.vehicleId });
+      qb.where(`vehicle.id = :vehicleId`, { vehicleId: query.vehicleId });
     }
-    // genLikeWhere(qb, query, 'vehicle_maintain', ['licensePlate', 'vehicleOwnerName', 'vehicleTypeName',]);
-    const count = await qb.getCount();
-    const { page = 1, size = 10 } = query;
-    qb.limit(size);
-    qb.offset(size * (page - 1));
-    const list = await qb.getMany();
+    // genLikeWhereConditions(qb, query, 'vehicle_maintain', ['licensePlate', 'vehicleOwnerName', 'vehicleTypeName',]);
+    // genWhereConditions(qb, query, 'vehicle_maintain', ['isOutRepair']);
+    // const count = await qb.getCount();
+    // const { page = 1, size = 10 } = query;
+    // qb.limit(size);
+    // qb.offset(size * (page - 1));
+    // const list = await qb.getMany();
+    const { list, count } = await queryPage(qb, query);
     return { list: list.map((x) => x.toResponseObject()), count };
     // return { list, count };
   }
@@ -109,7 +128,7 @@ export class VehicleMaintainService {
     return this.vehicleMaintainRepository
       .createQueryBuilder('vehicle_maintain')
       .leftJoinAndSelect('vehicle_maintain.createUser', 'user')
-      .leftJoinAndSelect('vehicle_maintain.vehicle', 'maintain')
+      .leftJoinAndSelect('vehicle_maintain.vehicle', 'vehicle')
       .where(`vehicle_maintain.id = :id`, { id })
       .getOne();
   }
@@ -122,7 +141,10 @@ export class VehicleMaintainService {
     const existVehicleMaintain = await this.findOne(id);
     console.log(existVehicleMaintain, 'existVehicleMaintain');
     if (!existVehicleMaintain) {
-      throw new HttpException(`id为${id}的维修记录不存在`, 401);
+      throw new HttpException(
+        `id为${id}的维修记录不存在`,
+        HttpStatus.NOT_FOUND,
+      );
     }
     const updateVehicle = this.vehicleMaintainRepository.merge(
       existVehicleMaintain,
@@ -131,12 +153,7 @@ export class VehicleMaintainService {
     return this.vehicleMaintainRepository.save(updateVehicle);
   }
 
-  async remove(id: string) {
-    const exist = await this.findOne(id);
-    if (!exist) {
-      throw new HttpException(`id为${id}的车辆不存在`, 401);
-    }
-    await this.vehicleMaintainRepository.remove(exist);
-    return true;
+  remove(id: string) {
+    return removeRecord(id, this.vehicleMaintainRepository);
   }
 }

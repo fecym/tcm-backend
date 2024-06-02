@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PostsEntity } from './posts.entity';
 import { TagService } from '../tag/tag.service';
+import { queryPage, removeRecord } from '../utils';
 
 @Injectable()
 export class PostsService {
@@ -63,14 +64,8 @@ export class PostsService {
     qb.where('1 = 1');
     qb.orderBy('post.create_time', 'DESC');
 
-    const count = await qb.getCount();
-    const { page = 1, size = 10 } = query;
-    qb.limit(size);
-    qb.offset(size * (page - 1));
-
-    const posts = await qb.getMany();
-    const result: PostInfoDto[] = posts.map((item) => item.toResponseObject());
-    return { list: result, count: count };
+    const { list, count } = await queryPage(qb, query);
+    return { list: list.map((item) => item.toResponseObject()), count };
 
     //  使用find 方式实现
     /**
@@ -155,11 +150,7 @@ export class PostsService {
       .getRawMany();
   }
 
-  async remove(id) {
-    const existPost = await this.postsRepository.findOne({ where: { id } });
-    if (!existPost) {
-      throw new HttpException(`id为${id}的文章不存在`, HttpStatus.BAD_REQUEST);
-    }
-    return await this.postsRepository.remove(existPost);
+  remove(id) {
+    return removeRecord(id, this.postsRepository);
   }
 }

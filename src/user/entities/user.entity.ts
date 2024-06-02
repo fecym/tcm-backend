@@ -9,8 +9,7 @@ import { Exclude } from 'class-transformer';
 import { HerbEntity } from '../../herbs/entities/herb.entity';
 import { setPassword } from '../../utils';
 import { RoleEnum } from '../../enum';
-
-export const roleTypes = ['root', 'author', 'visitor'];
+import { RelationshipDesc, RoleDesc } from '../../enum/enumDesc';
 
 @Entity('user')
 export class UserEntity {
@@ -64,5 +63,11 @@ export class UserEntity {
   @BeforeInsert()
   async encryptPwd() {
     this.password = setPassword(this.password);
+  }
+
+  toResponseObject() {
+    const obj: any = { ...this };
+    obj.roleName = RoleDesc[obj.role];
+    return obj;
   }
 }

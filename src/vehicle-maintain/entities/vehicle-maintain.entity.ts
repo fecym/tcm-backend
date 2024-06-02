@@ -1,9 +1,15 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
 import { transformDateTime } from '../../utils';
 import { InfoVehicleDto } from '../../vehicle/dto/info-vehicle.dto';
-import { YesNo } from '../../enum';
+import { YesNoEnum } from '../../enum';
 
 @Entity('vehicle_maintain')
 export class VehicleMaintainEntity {
@@ -21,6 +27,7 @@ export class VehicleMaintainEntity {
     comment: '车辆形式距离',
     name: 'distance_traveled',
     type: 'decimal',
+    default: 0,
   })
   distanceTraveled: number;
 
@@ -48,12 +55,12 @@ export class VehicleMaintainEntity {
 
   @Column({
     type: 'enum',
-    enum: YesNo,
-    default: YesNo.No,
+    enum: YesNoEnum,
+    default: YesNoEnum.No,
     comment: '是否外出维修',
     name: 'is_out_repair',
   })
-  isOutRepair: YesNo;
+  isOutRepair: YesNoEnum;
 
   @Column({ length: 32, comment: '维修地点', name: 'repair_address' })
   repairAddress: string;
@@ -113,6 +120,7 @@ export class VehicleMaintainEntity {
 
   // 创建人
   @ManyToOne(() => UserEntity, (user) => user.nickname)
+  @JoinColumn({ name: 'user_id' })
   createUser: UserEntity;
 
   @Column({

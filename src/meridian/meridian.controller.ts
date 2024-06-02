@@ -22,15 +22,14 @@ import { SelectDto, transformSelect } from '../dto/select.dto';
 
 @ApiTags('十二正经和奇经八脉')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('1', '2')
 @Controller('meridian')
 @UseInterceptors(CreateTimeInterceptor)
 export class MeridianController {
   constructor(private readonly meridianService: MeridianService) {}
 
   @ApiOperation({ summary: '创建' })
-  @Roles('1', '2')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createMeridianDto: CreateMeridianDto) {
     return this.meridianService.create(createMeridianDto);
@@ -57,7 +56,6 @@ export class MeridianController {
 
   @ApiOperation({ summary: '更新' })
   @Roles('1')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
@@ -68,7 +66,6 @@ export class MeridianController {
 
   @ApiOperation({ summary: '删除' })
   @Roles('1')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.meridianService.remove(id);

@@ -23,7 +23,8 @@ import { QueryPageVehicleDto } from '../vehicle/dto/query-vehicle.dot';
 
 @ApiTags('车辆维修工单')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('1', '4')
 @Controller('vehicle-maintain')
 @UseInterceptors(CreateTimeInterceptor)
 export class VehicleMaintainController {
@@ -32,8 +33,6 @@ export class VehicleMaintainController {
   ) {}
 
   @ApiOperation({ summary: '创建维修工单' })
-  @Roles('1', '4')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(
     @Req() req: any,
@@ -47,15 +46,14 @@ export class VehicleMaintainController {
 
   @ApiOperation({ summary: '获取维系工单列表' })
   @Get()
-  findAll(@Query() query: QueryVehicleMaintainDto) {
-    return this.vehicleMaintainService.findAll(query);
+  findAll(@Query() query: QueryVehicleMaintainDto, @Req() req) {
+    return this.vehicleMaintainService.findAll(query, req.user);
   }
 
   @ApiOperation({ summary: '分页查询车辆' })
-  @UseGuards(AuthGuard('jwt'))
   @Get('page')
-  findPage(@Query() query: QueryPageVehicleDto) {
-    return this.vehicleMaintainService.findPage(query);
+  findPage(@Query() query: QueryPageVehicleDto, @Req() req) {
+    return this.vehicleMaintainService.findPage(query, req.user);
   }
 
   @ApiOperation({ summary: '查询车辆维系次数' })
@@ -76,7 +74,6 @@ export class VehicleMaintainController {
   }
 
   @Put(':id')
-  @Roles('1', '4')
   update(
     @Param('id') id: string,
     @Req() req,
@@ -90,7 +87,6 @@ export class VehicleMaintainController {
   }
 
   @Delete(':id')
-  @Roles('1', '4')
   remove(@Param('id') id: string) {
     return this.vehicleMaintainService.remove(id);
   }
