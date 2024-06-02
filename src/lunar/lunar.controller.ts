@@ -1,7 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { LunarService } from './lunar.service';
 import { GetLunarInfoDto } from './lunar.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('公历转换')
 @Controller('lunar')
 export class LunarController {
   constructor(private readonly lunarService: LunarService) {}

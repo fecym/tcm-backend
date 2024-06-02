@@ -1,6 +1,8 @@
 import * as dayjs from 'dayjs';
 import { hashSync } from 'bcryptjs';
-import { SelectQueryBuilder } from 'typeorm';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
+export * from './query';
 
 export function isEmpty(value) {
   if (Array.isArray(value)) return value.length === 0;
@@ -13,46 +15,6 @@ export function getDuplicateName(str) {
   return match?.[1] ?? '';
 }
 
-export function genWhere(
-  qb: SelectQueryBuilder<any>,
-  query: Record<string, any>,
-  queryBuilderAlias: string,
-  keys: string[] = [],
-  isLike = false,
-) {
-  if (!qb || !query || !queryBuilderAlias || keys.length === 0) {
-    throw new Error('Invalid arguments provided to genWhere');
-  }
-  if (isLike) return genLikeWhere(qb, query, queryBuilderAlias, keys);
-  const excludeKeys = ['page', 'size'];
-  keys.forEach((key) => {
-    if (!excludeKeys.includes(key) && !isEmpty(query[key])) {
-      // qb.where('user.email = :email', { email: 'query.email' });
-      qb.andWhere(`${queryBuilderAlias}.${key} = :${key}`, {
-        [key]: query[key],
-      });
-    }
-  });
-}
-
-export function genLikeWhere(
-  qb: SelectQueryBuilder<any>,
-  query: Record<string, any>,
-  queryBuilderAlias: string,
-  keys: string[] = [],
-) {
-  if (!qb || !query || !queryBuilderAlias || keys.length === 0) {
-    throw new Error('Invalid arguments provided to genLikeWhere');
-  }
-  keys.forEach((key) => {
-    if (!isEmpty(query[key])) {
-      qb.andWhere(`${queryBuilderAlias}.${key} LIKE :${key}`, {
-        [key]: `%${query[key]}%`,
-      });
-    }
-  });
-}
-
 export function transformDateTime(value: Date): string {
   if (!value) return '';
   return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
@@ -60,4 +22,26 @@ export function transformDateTime(value: Date): string {
 
 export function setPassword(password: string) {
   return hashSync(password, 10);
+}
+
+export function hasExist(id, repository, key, value) {
+  return repository.findOne({ where: { [key]: value } });
+}
+
+export function removeRecord(id, repository) {
+  return hasExist(id, repository, 'id', id).then((exist) => {
+    if (!exist) {
+      throw new HttpException(`该记录不存在`, HttpStatus.NOT_FOUND);
+    }
+    return repository.remove(exist).then((res) => !!res);
+  });
+}
+
+export async function queryPage(qb, query) {
+  const count = await qb.getCount();
+  const { page = 1, size = 10 } = query;
+  qb.limit(size);
+  qb.offset(size * (page - 1));
+  const list = await qb.getMany();
+  return { count, list };
 }
