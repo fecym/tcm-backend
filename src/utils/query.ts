@@ -70,3 +70,12 @@ export function genWhereOrConditions(
     .join(' OR ');
   qb.where(`(${conditions})`, { keyword: `%${query.keyword}%` });
 }
+
+export async function queryPage(qb, query) {
+  const count = await qb.getCount();
+  const { page = 1, size = 10 } = query;
+  qb.limit(size);
+  qb.offset(size * (page - 1));
+  const list = (await qb.getMany()) ?? [];
+  return { count, list };
+}
