@@ -1,17 +1,30 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { FriendEntity } from './entities/friend.entity';
-import { Repository, In } from 'typeorm';
-import { genLikeWhereConditions, removeRecord } from '../utils';
+import { EntityManager, In, Repository, TableForeignKey } from 'typeorm';
+import {
+  checkReferencedRecords,
+  formatInfoResponse,
+  formatListResponse,
+  genLikeWhereConditions,
+  removeRecord,
+} from '../utils';
 import { QueryFriendDto } from './dto/query-frient.dto';
+import { ForeignKeyMetadata } from 'typeorm/metadata/ForeignKeyMetadata';
 
 @Injectable()
 export class FriendService {
   constructor(
     @InjectRepository(FriendEntity)
     private friendRepository: Repository<FriendEntity>,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async create(createFriendDto: CreateFriendDto, user) {
@@ -33,11 +46,13 @@ export class FriendService {
   findAll(query: QueryFriendDto, user) {
     const qb = this.friendRepository
       .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.createUser', 'user')
+      // .leftJoinAndSelect('friend.createUser', 'user')
+      // 使用 innerJoin 不会返回用户信息
+      .innerJoin('friend.createUser', 'user')
       .where('user.id = :userId', { userId: user.id })
       .orderBy('friend.create_time', 'DESC');
     genLikeWhereConditions(qb, query, 'friend', ['name']);
-    return qb.getMany().then((list) => list.map((x) => x.toResponseObject()));
+    return qb.getMany().then(formatListResponse);
   }
 
   findByIds(ids: string[]) {
@@ -51,7 +66,7 @@ export class FriendService {
   findOne(id) {
     return this.friendRepository
       .findOne({ where: { id } })
-      .then((data) => data.toResponseObject());
+      .then(formatInfoResponse);
   }
 
   async update(id, updateFriendDto: UpdateFriendDto) {
@@ -67,7 +82,8 @@ export class FriendService {
     return this.friendRepository.save(updateVehicle);
   }
 
-  remove(id) {
+  async remove(id) {
+    await checkReferencedRecords(this.entityManager, FriendEntity, id);
     return removeRecord(id, this.friendRepository);
   }
 }

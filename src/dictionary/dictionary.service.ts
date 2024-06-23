@@ -5,10 +5,46 @@ import {
   herbTasteTypes,
   herbToxicTypes,
 } from '../herbs/entities/herb.entity';
-import { RoleEnum } from '../enum';
+import {
+  ExpenseTypeDesc,
+  GenderDesc,
+  PayTypeDesc,
+  RelationshipDesc,
+  RoleDesc,
+} from '../enum/enumDesc';
 
 @Injectable()
 export class DictionaryService {
+  // 通用的转换函数
+  enumDescToDict<T extends Record<string, string | number>>(
+    enumObject: T,
+  ): { label: string | number; value: string | number }[] {
+    return Object.keys(enumObject).map((key) => ({
+      label: enumObject[key],
+      value: key,
+    }));
+  }
+
+  getFriendRelationship() {
+    return this.enumDescToDict(RelationshipDesc);
+  }
+
+  getUserRole() {
+    return this.enumDescToDict(RoleDesc);
+  }
+
+  getPayType() {
+    return this.enumDescToDict(PayTypeDesc);
+  }
+
+  getExpenseType() {
+    return this.enumDescToDict(ExpenseTypeDesc);
+  }
+
+  getGender() {
+    return this.enumDescToDict(GenderDesc);
+  }
+
   getTaste() {
     return herbTasteTypes.map((label) => ({ label, value: label }));
   }
@@ -23,11 +59,5 @@ export class DictionaryService {
 
   getCategory() {
     return herbCategoryTypes.map((label) => ({ label, value: label }));
-  }
-
-  getUserRole() {
-    return Object.keys(RoleEnum)
-      .filter((key) => !isNaN(RoleEnum[key]))
-      .map((key) => ({ label: key, value: RoleEnum[key] }));
   }
 }

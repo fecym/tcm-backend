@@ -36,4 +36,27 @@ export class DictionaryController {
   getUserRole() {
     return this.dictionaryService.getUserRole();
   }
+  @ApiOperation({ summary: '性别' })
+  @Get('/gender')
+  getGender() {
+    return this.dictionaryService.getGender();
+  }
+
+  @ApiOperation({ summary: '朋友关系' })
+  @Get('/friend/relationship')
+  getUserGender() {
+    return this.dictionaryService.getFriendRelationship();
+  }
+
+  @ApiOperation({ summary: '支付类型' })
+  @Get('/pay-type')
+  getPayType() {
+    return this.dictionaryService.getPayType();
+  }
+
+  @ApiOperation({ summary: '消费类型' })
+  @Get('/expense-type')
+  getExpenseType() {
+    return this.dictionaryService.getExpenseType();
+  }
 }

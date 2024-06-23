@@ -120,7 +120,7 @@ export class VehicleMaintainEntity {
 
   // 创建人
   @ManyToOne(() => UserEntity, (user) => user.nickname)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'create_user_id' })
   createUser: UserEntity;
 
   @Column({

@@ -43,13 +43,12 @@ export class FriendEntity {
   })
   reputation: number;
 
-  @ManyToMany(() => ExpenseEntity, (expense) => expense.friends)
-  @JoinTable()
-  expenses: ExpenseEntity[];
-
   @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'create_user_id' })
   createUser: UserEntity;
+
+  @ManyToMany(() => ExpenseEntity, (expense) => expense.friends)
+  expenses: ExpenseEntity[];
 
   @Column({
     name: 'create_time',

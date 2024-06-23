@@ -24,6 +24,7 @@ export const PayTypeDesc: { [key in PayTypeEnum]: string } = {
   [PayTypeEnum.ALIPAY]: '支付宝',
   [PayTypeEnum.WECHAT]: '微信',
   [PayTypeEnum.BANK_CARD]: '银行卡',
+  [PayTypeEnum.OTHER]: '其他',
 };
 
 export const GenderDesc: { [key in GenderEnum]: string } = {

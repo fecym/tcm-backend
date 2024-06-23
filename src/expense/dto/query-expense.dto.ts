@@ -1,7 +1,13 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateExpenseDto } from './create-expense.dto';
+import { ExpenseTypeEnum } from '../../enum';
+import { IsEnum, IsString } from 'class-validator';
 
 export class QueryExpenseDto extends PartialType(CreateExpenseDto) {
+  @ApiProperty({ description: '消费类型' })
+  @IsString()
+  expenseTypes: string;
+
   @ApiProperty({ description: '月份', required: false })
   month: string;
 
