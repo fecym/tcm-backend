@@ -22,7 +22,7 @@ export class UserInfoDto {
   @ApiProperty({
     description: '角色',
     enum: RoleEnum,
-    default: RoleEnum.visitor,
+    default: RoleEnum.admin,
   })
   role: string;
 

@@ -18,7 +18,7 @@ import { Roles, RolesGuard } from '../auth/role.guard';
 @ApiTags('穴位')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '2')
+@Roles('1', '2', '4')
 @Controller('acu-point')
 export class AcuPointController {
   constructor(private readonly acuPointService: AcuPointService) {}

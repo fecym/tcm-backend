@@ -44,8 +44,6 @@ export class UserController {
   @ApiOperation({ summary: '获取用户列表' })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiBearerAuth()
-  // @Roles('1', '2')
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseGuards(AuthGuard('jwt'))
   @Get('list')
   findAll(@Query() query: UserPageQueryDto) {
@@ -90,7 +88,7 @@ export class UserController {
 
   @ApiOperation({ summary: '删除用户' })
   @ApiBearerAuth()
-  @Roles('1')
+  @Roles('0')
   // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')

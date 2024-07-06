@@ -5,6 +5,7 @@ import {
   ManyToMany,
   JoinTable,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { MeridianEntity } from '../../meridian/entities/meridian.entity';
 import { UserEntity } from '../../user/entities/user.entity';
@@ -85,10 +86,13 @@ export class HerbEntity {
   })
   updateTime: Date;
 
+  // 创建人
   @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
+  @JoinColumn({ name: 'create_user_id' })
   createUser: UserEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
+  @JoinColumn({ name: 'update_user_id' })
   updateUser: UserEntity;
 
   toResponseObject(): InfoHerbDto {

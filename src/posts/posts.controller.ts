@@ -27,7 +27,7 @@ export class PostsController {
   @ApiOperation({ summary: '创建文章' })
   @ApiBearerAuth()
   @Post()
-  @Roles('1', '2')
+  @Roles('1', '2', '4')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   async create(@Body() post: CreatePostDto, @Req() req) {
     return await this.postsService.create(req.user, post);

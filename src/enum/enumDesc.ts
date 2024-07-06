@@ -4,6 +4,7 @@ import {
   PayTypeEnum,
   RelationshipEnum,
   RoleEnum,
+  TransferTypeEnum,
 } from './index';
 
 export const ExpenseTypeDesc: { [key in ExpenseTypeEnum]: string } = {
@@ -24,6 +25,7 @@ export const PayTypeDesc: { [key in PayTypeEnum]: string } = {
   [PayTypeEnum.ALIPAY]: '支付宝',
   [PayTypeEnum.WECHAT]: '微信',
   [PayTypeEnum.BANK_CARD]: '银行卡',
+  [PayTypeEnum.OTHER]: '其他',
 };
 
 export const GenderDesc: { [key in GenderEnum]: string } = {
@@ -33,10 +35,11 @@ export const GenderDesc: { [key in GenderEnum]: string } = {
 };
 
 export const RoleDesc: { [key in RoleEnum]: string } = {
-  [RoleEnum.root]: '超级管理员',
-  [RoleEnum.author]: '文章作者',
-  [RoleEnum.visitor]: '访问者|访客',
-  [RoleEnum.repair]: '维修者',
+  [RoleEnum.super_admin]: '超级管理员',
+  [RoleEnum.admin]: '管理员',
+  [RoleEnum.author]: '作者',
+  [RoleEnum.technician]: '技术员',
+  [RoleEnum.tester]: '测试',
 };
 
 export const RelationshipDesc: {
@@ -48,4 +51,14 @@ export const RelationshipDesc: {
   [RelationshipEnum.COLLEAGUE]: '同事',
   [RelationshipEnum.TEACHER_STUDENT]: '师生',
   [RelationshipEnum.OTHER]: '其他',
+};
+
+export const TransferTypeDesc: {
+  [key in TransferTypeEnum]: string;
+} = {
+  [TransferTypeEnum.BORROW_MONEY]: '借钱',
+  [TransferTypeEnum.RETURN_MONEY]: '还钱',
+  [TransferTypeEnum.GIFT_MONEY]: '礼金',
+  [TransferTypeEnum.REPAY_MONEY]: '还礼',
+  [TransferTypeEnum.OTHER]: '其他',
 };

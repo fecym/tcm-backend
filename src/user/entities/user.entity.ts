@@ -9,7 +9,7 @@ import { Exclude } from 'class-transformer';
 import { HerbEntity } from '../../herbs/entities/herb.entity';
 import { setPassword } from '../../utils';
 import { RoleEnum } from '../../enum';
-import { RelationshipDesc, RoleDesc } from '../../enum/enumDesc';
+import { RoleDesc } from '../../enum/enumDesc';
 
 @Entity('user')
 export class UserEntity {
@@ -38,7 +38,7 @@ export class UserEntity {
 
   @Column('simple-enum', {
     enum: RoleEnum,
-    default: RoleEnum.visitor,
+    default: RoleEnum.admin,
   })
   role: RoleEnum;
 

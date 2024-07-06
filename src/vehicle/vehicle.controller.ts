@@ -23,7 +23,7 @@ import { CreateTimeInterceptor } from '../core/interceptor/create-time.intercept
 @ApiTags('车辆管理')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '4')
+@Roles('1', '3', '4')
 @Controller('vehicle')
 @UseInterceptors(CreateTimeInterceptor)
 export class VehicleController {

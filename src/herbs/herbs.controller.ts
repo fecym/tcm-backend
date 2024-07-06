@@ -21,7 +21,7 @@ import { QueryPageHerbDto, QueryHerbDto } from './dto/query-herb.dto';
 @ApiTags('神农本草经')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '2')
+@Roles('1', '2', '4')
 @Controller('herbs')
 export class HerbsController {
   constructor(private readonly herbsService: HerbsService) {}
