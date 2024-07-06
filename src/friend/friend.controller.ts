@@ -23,7 +23,6 @@ import { Roles, RolesGuard } from '../auth/role.guard';
 @Controller('friend')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '2', '4')
 @UseInterceptors(CreateTimeInterceptor)
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}

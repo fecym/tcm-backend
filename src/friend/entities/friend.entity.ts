@@ -11,6 +11,7 @@ import { ExpenseEntity } from '../../expense/entities/expense.entity';
 import { GenderEnum, RelationshipEnum } from '../../enum';
 import { GenderDesc, RelationshipDesc } from '../../enum/enumDesc';
 import { UserEntity } from '../../user/entities/user.entity';
+import { transformDateTime } from '../../utils';
 
 @Entity('friend')
 export class FriendEntity {
@@ -43,18 +44,18 @@ export class FriendEntity {
   })
   reputation: number;
 
-  @ManyToMany(() => ExpenseEntity, (expense) => expense.friends)
-  @JoinTable()
-  expenses: ExpenseEntity[];
-
   @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'create_user_id' })
   createUser: UserEntity;
+
+  @ManyToMany(() => ExpenseEntity, (expense) => expense.friends)
+  expenses: ExpenseEntity[];
 
   @Column({
     name: 'create_time',
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
+    transformer: { to: transformDateTime, from: transformDateTime },
   })
   createTime: Date;
 
