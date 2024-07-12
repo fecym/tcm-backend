@@ -26,13 +26,13 @@ export enum PayTypeEnum {
 
 export enum ExpenseTypeEnum {
   DINING = '1', // 餐饮
-  TRANSPORT = '2', // 交通
-  SNACKS = '3', // 零食
-  LIVING = '4', // 生活
+  SNACKS = '2', // 零食
+  ENTERTAINMENT = '3', // 娱乐
+  TRANSPORT = '4', // 交通
   BILLS = '5', // 缴费
-  CLOTHING = '6', // 服饰
-  HOUSING = '7', // 住房
-  ENTERTAINMENT = '8', // 娱乐
+  LIVING = '6', // 生活
+  CLOTHING = '7', // 服饰
+  HOUSING = '8', // 住房
   HOTEL = '9', // 酒店
   TRANSFER = '10', // 转账
   OTHER = '11', // 其他

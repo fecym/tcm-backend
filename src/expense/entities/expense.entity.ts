@@ -6,26 +6,22 @@ import {
   ManyToOne,
   JoinColumn,
   BeforeInsert,
-  OneToMany,
   JoinTable,
 } from 'typeorm';
 import { transformDateTime } from '../../utils';
 import { UserEntity } from '../../user/entities/user.entity';
 import { ExpenseTypeEnum, PayTypeEnum } from '../../enum';
 import { FriendEntity } from '../../friend/entities/friend.entity';
-import {
-  ExpenseTypeDesc,
-  GenderDesc,
-  PayTypeDesc,
-  RelationshipDesc,
-} from '../../enum/enumDesc';
-import { Type } from 'class-transformer';
+import { ExpenseTypeDesc, PayTypeDesc } from '../../enum/enumDesc';
 
 // 消费记录表
 @Entity('expense')
 export class ExpenseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ length: 8, comment: '消费名称', name: 'name' })
+  name: string;
 
   @Column({
     type: 'date',

@@ -42,7 +42,11 @@ async function applyQueryConditions(qb, query): Promise<void> {
     });
   }
 
-  genLikeWhereConditions(qb, query, 'expense', ['expense_type', 'pay_type']);
+  genLikeWhereConditions(qb, query, 'expense', [
+    'expense_type',
+    'pay_type',
+    'name',
+  ]);
 }
 
 @Injectable()
@@ -141,6 +145,7 @@ export class ExpenseService {
     qb.select([
       'expense.id',
       'expense.date',
+      'expense.name',
       'expense.amount',
       'expense.expenseType',
       'expense.payType',
