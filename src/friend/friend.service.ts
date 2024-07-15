@@ -1,14 +1,9 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { FriendEntity } from './entities/friend.entity';
-import { EntityManager, In, Repository, TableForeignKey } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   checkReferencedRecords,
   formatInfoResponse,
@@ -17,7 +12,6 @@ import {
   removeRecord,
 } from '../utils';
 import { QueryFriendDto } from './dto/query-frient.dto';
-import { ForeignKeyMetadata } from 'typeorm/metadata/ForeignKeyMetadata';
 
 @Injectable()
 export class FriendService {
