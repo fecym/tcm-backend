@@ -16,5 +16,6 @@ import { LunarService } from '../lunar/lunar.service';
   ],
   controllers: [ExpenseController],
   providers: [ExpenseService, LunarService],
+  exports: [ExpenseService],
 })
 export class ExpenseModule {}

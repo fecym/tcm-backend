@@ -61,6 +61,12 @@ export class DictionaryController {
     return this.dictionaryService.getExpenseType();
   }
 
+  @ApiOperation({ summary: '消费类型' })
+  @Get('/date-interval')
+  getDateInterval() {
+    return this.dictionaryService.getDateInterval();
+  }
+
   @ApiOperation({ summary: '转账方式' })
   @Get('/transfer-mode')
   getTransferMode() {

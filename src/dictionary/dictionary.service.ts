@@ -6,6 +6,7 @@ import {
   herbToxicTypes,
 } from '../herbs/entities/herb.entity';
 import {
+  DateIntervalDesc,
   ExpenseTypeDesc,
   GenderDesc,
   PayTypeDesc,
@@ -41,6 +42,10 @@ export class DictionaryService {
 
   getExpenseType() {
     return this.enumDescToDict(ExpenseTypeDesc);
+  }
+
+  getDateInterval() {
+    return this.enumDescToDict(DateIntervalDesc);
   }
 
   getTransferType(query) {

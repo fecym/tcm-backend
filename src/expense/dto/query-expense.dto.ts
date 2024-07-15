@@ -1,9 +1,13 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { CreateExpenseDto } from './create-expense.dto';
-import { ExpenseTypeEnum } from '../../enum';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEmpty, IsOptional, IsString } from 'class-validator';
 
 export class QueryExpenseDto extends PartialType(CreateExpenseDto) {
+  @ApiPropertyOptional({ description: '消费名称' })
+  @IsEmpty()
+  @IsOptional()
+  name: string;
+
   @ApiProperty({ description: '消费类型' })
   @IsString()
   expenseTypes: string;

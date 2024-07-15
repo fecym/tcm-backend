@@ -12,6 +12,11 @@ import { ExpenseTypeEnum, PayTypeEnum } from '../../enum';
 import { Transform } from 'class-transformer';
 
 export class CreateExpenseDto {
+  @ApiPropertyOptional({ description: '消费名称' })
+  @IsNotEmpty()
+  @IsOptional()
+  name: string;
+
   @ApiPropertyOptional({ description: '消费日期' })
   @IsDateString()
   @IsNotEmpty()

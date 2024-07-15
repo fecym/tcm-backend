@@ -54,3 +54,10 @@ export enum TransferTypeEnum {
   REPAY_MONEY = '3', // 还礼
   OTHER = '4', // 其他
 }
+
+export enum DateIntervalEnum {
+  DAY = '1',
+  WEEK = '2',
+  MONTH = '3',
+  YEAR = '4',
+}

@@ -24,6 +24,7 @@ import { LunarService } from './lunar/lunar.service';
 import { ExpenseModule } from './expense/expense.module';
 import { FriendModule } from './friend/friend.module';
 import { TransfersModule } from './transfers/transfers.module';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { TransfersModule } from './transfers/transfers.module';
     ExpenseModule,
     FriendModule,
     TransfersModule,
+    TestModule,
   ],
   controllers: [AppController, LunarController],
   providers: [AppService, LunarService],

@@ -1,4 +1,5 @@
 import {
+  DateIntervalEnum,
   ExpenseTypeEnum,
   GenderEnum,
   PayTypeEnum,
@@ -61,4 +62,13 @@ export const TransferTypeDesc: {
   [TransferTypeEnum.GIFT_MONEY]: '礼金',
   [TransferTypeEnum.REPAY_MONEY]: '还礼',
   [TransferTypeEnum.OTHER]: '其他',
+};
+
+export const DateIntervalDesc: {
+  [key in DateIntervalEnum]: string;
+} = {
+  [DateIntervalEnum.DAY]: '日',
+  [DateIntervalEnum.WEEK]: '周',
+  [DateIntervalEnum.MONTH]: '月',
+  [DateIntervalEnum.YEAR]: '年',
 };

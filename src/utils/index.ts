@@ -7,7 +7,7 @@ export * from './query';
 
 export function isEmpty(value) {
   if (Array.isArray(value)) return value.length === 0;
-  return value === null || value === undefined || value == '';
+  return value === null || value === undefined || value === '';
 }
 
 export function getDuplicateName(str) {
@@ -89,7 +89,10 @@ export async function checkReferencedRecords(
   }
 }
 
-export function generateDateRange(startDate: Date, endDate: Date): Date[] {
+export function generateDateRange(
+  startDate: Date | string,
+  endDate: Date | string,
+): Date[] {
   const start = dayjs(startDate);
   const end = dayjs(endDate);
   const dateRange = [];
@@ -101,4 +104,8 @@ export function generateDateRange(startDate: Date, endDate: Date): Date[] {
   }
 
   return dateRange;
+}
+
+export function getRandomNumber(min, max, fractionDigits = 2) {
+  return (Math.random() * (max - min) + min).toFixed(fractionDigits);
 }

@@ -15,12 +15,16 @@ import {
   formatListResponse,
   genLikeWhereConditions,
   genWhereDateRangeConditions,
+  isEmpty,
   queryPage,
   removeRecord,
 } from '../utils';
 import { FriendService } from '../friend/friend.service';
 import { isEqual } from 'lodash';
 import { LunarService } from '../lunar/lunar.service';
+import { DateIntervalEnum } from '../enum';
+import { ExpenseTypeDesc } from '../enum/enumDesc';
+import * as dayjs from 'dayjs';
 
 async function applyQueryConditions(qb, query): Promise<void> {
   if (query.month) {
@@ -30,9 +34,9 @@ async function applyQueryConditions(qb, query): Promise<void> {
     genWhereDateRangeConditions(qb, 'expense', startDate, endDate);
   }
 
-  if (query.startTime && query.endTime) {
-    const startDate = new Date(query.startTime);
-    const endDate = new Date(query.endTime);
+  if (query.startDate && query.endDate) {
+    const startDate = new Date(query.startDate);
+    const endDate = new Date(query.endDate);
     genWhereDateRangeConditions(qb, 'expense', startDate, endDate);
   }
 
@@ -207,5 +211,76 @@ export class ExpenseService {
 
   remove(id: string) {
     return removeRecord(id, this.expenseRepository);
+  }
+
+  getAnalyzeTrend(query, user) {
+    let { startDate, endDate } = query;
+
+    startDate ??= dayjs().startOf('year').format('YYYY-MM-DD');
+    endDate ??= dayjs().endOf('year').format('YYYY-MM-DD');
+
+    const map = {
+      [DateIntervalEnum.DAY]: '%Y-%m-%d',
+      // [DateIntervalEnum.WEEK]: '%Y-%u',
+      [DateIntervalEnum.MONTH]: '%Y-%m',
+      [DateIntervalEnum.YEAR]: '%Y',
+    };
+    const { timeUnit } = query;
+    const groupByFormat = map[timeUnit] || '%Y-%m-%d';
+    if (timeUnit === DateIntervalEnum.WEEK) {
+      return this.expenseRepository.query(
+        `
+          SELECT 
+            DATE_FORMAT(DATE_SUB(date, INTERVAL WEEKDAY(date) DAY), '%Y-%m-%d') AS startWeek,
+            DATE_FORMAT(DATE_ADD(DATE_SUB(date, INTERVAL WEEKDAY(date) DAY), INTERVAL 6 DAY), '%Y-%m-%d') AS endWeek,
+            SUM(amount) as total
+          FROM expense
+          WHERE create_user_id = ? AND date BETWEEN ? AND ?
+          GROUP BY startWeek, endWeek
+          ORDER BY startWeek
+        `,
+        [user.id, startDate, endDate],
+      );
+    }
+    return this.expenseRepository.query(
+      `SELECT DATE_FORMAT(date, ?) as period, SUM(amount) as total
+       FROM expense
+       WHERE create_user_id = ? AND date BETWEEN ? AND ?
+       GROUP BY period
+       ORDER BY period`,
+      [groupByFormat, user.id, startDate, endDate],
+    );
+  }
+
+  async getAnalyzeType(dto, user) {
+    let { startDate, endDate } = dto;
+
+    startDate ??= dayjs().startOf('year').format('YYYY-MM-DD');
+    endDate ??= dayjs().endOf('year').format('YYYY-MM-DD');
+    console.log(dto.expenseTypes, 'dto.expenseTypes');
+    const expenseTypeList = !isEmpty(dto.expenseTypes)
+      ? dto.expenseTypes?.split(',')
+      : [];
+    console.log(expenseTypeList, 'expenseTypeList');
+
+    let query = `
+       SELECT SUM(amount) as value, expense_type as type, COUNT(*) AS count 
+       FROM expense 
+       WHERE create_user_id = ? AND date BETWEEN ? AND ?`;
+
+    const queryParams = [user.id, startDate, endDate];
+
+    if (expenseTypeList?.length > 0) {
+      query += ` AND expense_type IN (?)`;
+      queryParams.push(expenseTypeList);
+    }
+
+    query += ` GROUP BY expense_type`;
+
+    const format = (row) => ({ ...row, name: ExpenseTypeDesc[row.type] });
+
+    return this.expenseRepository
+      .query(query, queryParams)
+      .then((res) => res.map(format));
   }
 }

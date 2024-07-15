@@ -17,6 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/role.guard';
 import { QueryExpenseDto, QueryPageExpenseDto } from './dto/query-expense.dto';
 import { QueryDateRangeDto } from '../dto/date.dto';
+import { QueryAnalyzeDto } from './dto/query-analyze.dto';
 
 @ApiTags('消费记录')
 @ApiBearerAuth()
@@ -66,5 +67,17 @@ export class ExpenseController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.expenseService.remove(id);
+  }
+
+  @ApiOperation({ summary: '消费趋势' })
+  @Get('analyze/trend')
+  getAnalyzeTrend(@Query() query: QueryAnalyzeDto, @Req() req) {
+    return this.expenseService.getAnalyzeTrend(query, req.user);
+  }
+
+  @ApiOperation({ summary: '按类型统计消费' })
+  @Get('analyze/type')
+  getAnalyzeType(@Query() query: QueryAnalyzeDto, @Req() req) {
+    return this.expenseService.getAnalyzeType(query, req.user);
   }
 }
