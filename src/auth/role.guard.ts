@@ -31,10 +31,10 @@ export class RolesGuard implements CanActivate {
     if (!user) {
       return false;
     }
-    if (user.role === 0) {
+    if (+user.role === 0) {
       return true;
     }
-    const hasRoles = roles.some((role) => +role === user.role);
+    const hasRoles = roles.some((role) => +role === +user.role);
     if (!hasRoles) {
       throw new ForbiddenException('您没有权限');
     }

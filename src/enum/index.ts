@@ -1,9 +1,9 @@
 export enum RoleEnum {
-  super_admin,
-  admin = 1,
-  author = 2,
-  technician = 3,
-  tester = 4,
+  super_admin = '0',
+  admin = '1',
+  author = '2',
+  technician = '3',
+  tester = '4',
 }
 
 export enum YesNoEnum {
