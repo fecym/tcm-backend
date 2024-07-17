@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -17,11 +16,13 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/role.guard';
 import { QueryExpenseDto, QueryPageExpenseDto } from './dto/query-expense.dto';
+import { QueryDateRangeDto } from '../dto/date.dto';
+import { QueryAnalyzeDto } from './dto/query-analyze.dto';
 
 @ApiTags('消费记录')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '2', '4')
+@Roles('1', '4')
 @Controller('expense')
 export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) {}
@@ -35,13 +36,19 @@ export class ExpenseController {
   @ApiOperation({ summary: '查找所有消费记录' })
   @Get()
   findAll(@Query() query: QueryExpenseDto, @Req() req) {
-    return this.expenseService.findAll(query, req);
+    return this.expenseService.findAll(query, req.user);
   }
 
   @ApiOperation({ summary: '分页查找消费记录' })
   @Get('/page')
   findPage(@Query() query: QueryPageExpenseDto, @Req() req) {
-    return this.expenseService.findPage(query, req);
+    return this.expenseService.findPage(query, req.user);
+  }
+
+  @ApiOperation({ summary: '按月分组查找消费记录' })
+  @Get('/list/date')
+  getGroupedByDay(@Query() query: QueryDateRangeDto, @Req() req) {
+    return this.expenseService.getGroupedByDay(query, req.user);
   }
 
   @ApiOperation({ summary: '查询消费记录详情' })
@@ -51,7 +58,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({ summary: '更新消费记录' })
-  @Patch(':id')
+  @Post(':id')
   update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
     return this.expenseService.update(id, updateExpenseDto);
   }
@@ -60,5 +67,17 @@ export class ExpenseController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.expenseService.remove(id);
+  }
+
+  @ApiOperation({ summary: '消费趋势' })
+  @Get('analyze/trend')
+  getAnalyzeTrend(@Query() query: QueryAnalyzeDto, @Req() req) {
+    return this.expenseService.getAnalyzeTrend(query, req.user);
+  }
+
+  @ApiOperation({ summary: '按类型统计消费' })
+  @Get('analyze/type')
+  getAnalyzeType(@Query() query: QueryAnalyzeDto, @Req() req) {
+    return this.expenseService.getAnalyzeType(query, req.user);
   }
 }

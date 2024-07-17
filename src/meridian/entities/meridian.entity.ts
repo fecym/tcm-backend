@@ -2,14 +2,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
+  JoinColumn,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { HerbEntity } from '../../herbs/entities/herb.entity';
 import { transformDateTime } from '../../utils';
 import { AcuPointEntity } from '../../acu-point/entities/acu-point.entity';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('meridian')
 export class MeridianEntity {
@@ -63,6 +65,15 @@ export class MeridianEntity {
   // 备注
   @Column({ nullable: true })
   remark: string;
+
+  // 创建人
+  @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
+  @JoinColumn({ name: 'create_user_id' })
+  createUser: UserEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.nickname || user.username)
+  @JoinColumn({ name: 'update_user_id' })
+  updateUser: UserEntity;
 
   @CreateDateColumn({
     name: 'create_time',

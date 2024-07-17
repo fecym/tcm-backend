@@ -13,6 +13,7 @@ import { compareSync } from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserPageQueryDto } from './dto/user-query.dto';
 import {
+  formatInfoResponse,
   genLikeWhereConditions,
   queryPage,
   removeRecord,
@@ -44,7 +45,9 @@ export class UserService {
   }
 
   findOne(id) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository
+      .findOne({ where: { id } })
+      .then(formatInfoResponse);
   }
 
   findByUsername(username: string): Promise<UserEntity> {
@@ -57,11 +60,12 @@ export class UserService {
 
   async findAll(query: UserPageQueryDto) {
     try {
-      const qb = await this.userRepository
+      const qb = this.userRepository
         .createQueryBuilder('user')
         .orderBy('user.create_time', 'DESC');
 
       genLikeWhereConditions(qb, query, 'user', [
+        'role',
         'username',
         'nickname',
         'mobile',

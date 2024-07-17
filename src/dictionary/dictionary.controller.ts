@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { DictionaryService } from './dictionary.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -35,5 +35,47 @@ export class DictionaryController {
   @Get('/user/role')
   getUserRole() {
     return this.dictionaryService.getUserRole();
+  }
+
+  @ApiOperation({ summary: '性别' })
+  @Get('/gender')
+  getGender() {
+    return this.dictionaryService.getGender();
+  }
+
+  @ApiOperation({ summary: '朋友关系' })
+  @Get('/friend/relationship')
+  getUserGender() {
+    return this.dictionaryService.getFriendRelationship();
+  }
+
+  @ApiOperation({ summary: '支付类型' })
+  @Get('/pay-type')
+  getPayType() {
+    return this.dictionaryService.getPayType();
+  }
+
+  @ApiOperation({ summary: '消费类型' })
+  @Get('/expense-type')
+  getExpenseType() {
+    return this.dictionaryService.getExpenseType();
+  }
+
+  @ApiOperation({ summary: '消费类型' })
+  @Get('/date-interval')
+  getDateInterval() {
+    return this.dictionaryService.getDateInterval();
+  }
+
+  @ApiOperation({ summary: '转账方式' })
+  @Get('/transfer-mode')
+  getTransferMode() {
+    return this.dictionaryService.getPayType();
+  }
+
+  @ApiOperation({ summary: '转账类型' })
+  @Get('/transfer-type')
+  getTransferType(@Query() query: { type: string | number }) {
+    return this.dictionaryService.getTransferType(query);
   }
 }

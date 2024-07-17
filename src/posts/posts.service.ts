@@ -1,5 +1,5 @@
 import { CategoryService } from '../category/category.service';
-import { CreatePostDto, PostInfoDto, PostsRo } from './dto/post.dto';
+import { CreatePostDto, PostsRo } from './dto/post.dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

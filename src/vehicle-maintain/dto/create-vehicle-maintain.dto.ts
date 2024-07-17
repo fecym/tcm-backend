@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
-import { RelationshipEnum, YesNoEnum } from '../../enum';
+import { YesNoEnum } from '../../enum';
 
 export class CreateVehicleMaintainDto {
   @ApiProperty({ description: '维修工单名称', required: false })

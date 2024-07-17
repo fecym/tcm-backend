@@ -1,16 +1,22 @@
 import {
   IsNotEmpty,
-  IsNumber,
   IsString,
   IsOptional,
   IsDateString,
   IsArray,
   IsEnum,
+  IsUUID,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ExpenseTypeEnum, PayTypeEnum, RoleEnum } from '../../enum';
+import { ExpenseTypeEnum, PayTypeEnum } from '../../enum';
+import { Transform } from 'class-transformer';
 
 export class CreateExpenseDto {
+  @ApiPropertyOptional({ description: '消费名称' })
+  @IsNotEmpty()
+  @IsOptional()
+  name: string;
+
   @ApiPropertyOptional({ description: '消费日期' })
   @IsDateString()
   @IsNotEmpty()
@@ -23,7 +29,7 @@ export class CreateExpenseDto {
   remark?: string;
 
   @ApiPropertyOptional({ description: '消费金额' })
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty()
   amount: number;
 
@@ -33,7 +39,6 @@ export class CreateExpenseDto {
     default: ExpenseTypeEnum.DINING,
   })
   @IsString()
-  @IsOptional()
   @IsEnum(ExpenseTypeEnum)
   expenseType: ExpenseTypeEnum;
 
@@ -43,6 +48,8 @@ export class CreateExpenseDto {
     default: PayTypeEnum.ALIPAY,
   })
   @IsString()
+  @IsOptional()
+  @Transform(({ value }) => (value === '' ? null : value))
   @IsEnum(PayTypeEnum)
   payType: PayTypeEnum;
 
@@ -54,5 +61,6 @@ export class CreateExpenseDto {
   @ApiPropertyOptional({ description: '一起的朋友', type: [String] })
   @IsArray()
   @IsOptional()
+  @IsUUID('4', { each: true })
   friendIds?: string[];
 }

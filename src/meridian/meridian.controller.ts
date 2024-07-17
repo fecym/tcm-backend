@@ -23,7 +23,7 @@ import { SelectDto, transformSelect } from '../dto/select.dto';
 @ApiTags('十二正经和奇经八脉')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '2')
+@Roles('1', '2', '4')
 @Controller('meridian')
 @UseInterceptors(CreateTimeInterceptor)
 export class MeridianController {
@@ -55,7 +55,6 @@ export class MeridianController {
   }
 
   @ApiOperation({ summary: '更新' })
-  @Roles('1')
   @Put(':id')
   update(
     @Param('id') id: string,
@@ -65,7 +64,6 @@ export class MeridianController {
   }
 
   @ApiOperation({ summary: '删除' })
-  @Roles('1')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.meridianService.remove(id);

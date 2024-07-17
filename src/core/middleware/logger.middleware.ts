@@ -8,12 +8,13 @@ export class LoggerMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     const { method, originalUrl, ip } = req;
-    const userAgent = req.get('user-agent') || '';
+    // const userAgent = req.get('user-agent') || '';
     // const userAgent = '';
 
     // 记录请求日志
+    // this.loggerService.log(`Request - Method: ${method}, URL: ${originalUrl}, IP: ${ip}, User-Agent: ${userAgent}`);
     this.loggerService.log(
-      `Request - Method: ${method}, URL: ${originalUrl}, IP: ${ip}, User-Agent: ${userAgent}`,
+      `Request - Method: ${method}, URL: ${originalUrl}, IP: ${ip}`,
     );
 
     // // 缓存原始的 res.send 方法
@@ -60,7 +61,7 @@ export class LoggerMiddleware implements NestMiddleware {
     next = ((error?: any): void => {
       if (error) {
         this.loggerService.error(
-          `Error - Method: ${method}, URL: ${originalUrl}, IP: ${ip}, User-Agent: ${userAgent}, Error: ${error.message}`,
+          `Error - Method: ${method}, URL: ${originalUrl}, IP: ${ip}, Error: ${error.message}`,
           error.stack,
         );
       }

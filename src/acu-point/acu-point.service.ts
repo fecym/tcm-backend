@@ -5,6 +5,7 @@ import { UpdateAcuPointDto } from './dto/update-acu-point.dto';
 @Injectable()
 export class AcuPointService {
   create(createAcuPointDto: CreateAcuPointDto) {
+    console.log(createAcuPointDto);
     return 'This action adds a new acuPoint';
   }
 
@@ -17,6 +18,7 @@ export class AcuPointService {
   }
 
   update(id, updateAcuPointDto: UpdateAcuPointDto) {
+    console.log(updateAcuPointDto);
     return `This action updates a #${id} acuPoint`;
   }
 

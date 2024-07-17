@@ -1,5 +1,4 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreateVehicleMaintainDto } from './create-vehicle-maintain.dto';
 
 export class QueryVehicleMaintainDto {
   @ApiProperty({ description: '维修车辆' })

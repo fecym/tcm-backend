@@ -24,7 +24,7 @@ import { QueryPageVehicleDto } from '../vehicle/dto/query-vehicle.dot';
 @ApiTags('车辆维修工单')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '4')
+@Roles('1', '3', '4')
 @Controller('vehicle-maintain')
 @UseInterceptors(CreateTimeInterceptor)
 export class VehicleMaintainController {

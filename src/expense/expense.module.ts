@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ExpenseEntity } from './entities/expense.entity';
 import { FriendModule } from '../friend/friend.module';
 import { FriendEntity } from '../friend/entities/friend.entity';
+import { LunarService } from '../lunar/lunar.service';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { FriendEntity } from '../friend/entities/friend.entity';
     AuthModule,
   ],
   controllers: [ExpenseController],
-  providers: [ExpenseService],
+  providers: [ExpenseService, LunarService],
+  exports: [ExpenseService],
 })
 export class ExpenseModule {}

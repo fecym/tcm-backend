@@ -17,13 +17,12 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateTimeInterceptor } from '../core/interceptor/create-time.interceptor';
 import { QueryFriendDto } from './dto/query-frient.dto';
-import { Roles, RolesGuard } from '../auth/role.guard';
+import { RolesGuard } from '../auth/role.guard';
 
 @ApiTags('朋友')
 @Controller('friend')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('1', '2', '4')
 @UseInterceptors(CreateTimeInterceptor)
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}

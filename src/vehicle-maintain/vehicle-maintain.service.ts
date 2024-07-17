@@ -7,7 +7,7 @@ import {
 } from './dto/query-vehicle-maintain.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { genWhereConditions, isEmpty, queryPage, removeRecord } from '../utils';
+import { isEmpty, queryPage, removeRecord } from '../utils';
 import { VehicleMaintainEntity } from './entities/vehicle-maintain.entity';
 import { VehicleService } from '../vehicle/vehicle.service';
 
