@@ -21,13 +21,13 @@ export class TestController {
 
   @ApiOperation({ summary: '批量添加随机消费数据' })
   @Post('expense')
-  batchInsertExpense(@Req() req) {
+  batchInsertExpense(@Req() req: any) {
     return this.testService.batchInsertExpense(req.user);
   }
 
   @ApiOperation({ summary: '批量添加随机转账数据' })
   @Post('transfer')
-  batchInsertTransfer(@Req() req) {
+  batchInsertTransfer(@Req() req: any) {
     return this.testService.batchInsertTransfer(req.user);
   }
 }

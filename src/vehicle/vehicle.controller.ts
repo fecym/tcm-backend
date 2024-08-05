@@ -31,19 +31,19 @@ export class VehicleController {
 
   @ApiOperation({ summary: '创建车辆' })
   @Post()
-  create(@Body() createVehicleDto: CreateVehicleDto, @Req() req) {
+  create(@Body() createVehicleDto: CreateVehicleDto, @Req() req: any) {
     return this.vehicleService.create(createVehicleDto, req.user);
   }
 
   @ApiOperation({ summary: '获取车辆列表' })
   @Get()
-  findAll(@Query() query: QueryVehicleDto, @Req() req) {
+  findAll(@Query() query: QueryVehicleDto, @Req() req: any) {
     return this.vehicleService.findAll(query, req.user);
   }
 
   @ApiOperation({ summary: '分页查询车辆' })
   @Get('page')
-  findPage(@Query() query: QueryPageVehicleDto, @Req() req) {
+  findPage(@Query() query: QueryPageVehicleDto, @Req() req: any) {
     return this.vehicleService.findPage(query, req.user);
   }
 

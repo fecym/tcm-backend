@@ -63,17 +63,17 @@ export class FriendService {
       .then(formatInfoResponse);
   }
 
-  async update(id, updateFriendDto: UpdateFriendDto) {
+  async update(id: string, updateFriendDto: UpdateFriendDto) {
     const existFriend = await this.findOne(id);
     console.log(existFriend, 'existFriend');
     if (!existFriend) {
       throw new HttpException(`该记录不存在`, HttpStatus.NOT_FOUND);
     }
-    const updateVehicle = this.friendRepository.merge(
+    const updateFriend = this.friendRepository.merge(
       existFriend,
       updateFriendDto,
     );
-    return this.friendRepository.save(updateVehicle);
+    return this.friendRepository.save(updateFriend);
   }
 
   async remove(id) {

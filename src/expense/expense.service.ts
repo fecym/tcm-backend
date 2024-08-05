@@ -15,6 +15,7 @@ import {
   formatListResponse,
   genLikeWhereConditions,
   genWhereDateRangeConditions,
+  getDateRange,
   isEmpty,
   queryPage,
   removeRecord,
@@ -25,6 +26,7 @@ import { LunarService } from '../lunar/lunar.service';
 import { DateIntervalEnum } from '../enum';
 import { ExpenseTypeDesc } from '../enum/enumDesc';
 import * as dayjs from 'dayjs';
+import { QueryAnalyzeDto, QueryTotalAmountDto } from './dto/query-analyze.dto';
 
 async function applyQueryConditions(qb, query): Promise<void> {
   if (query.month) {
@@ -47,8 +49,8 @@ async function applyQueryConditions(qb, query): Promise<void> {
   }
 
   genLikeWhereConditions(qb, query, 'expense', [
-    'expense_type',
-    'pay_type',
+    'expenseType',
+    'payType',
     'name',
   ]);
 }
@@ -178,13 +180,13 @@ export class ExpenseService {
     }));
   }
 
-  findOne(id: string) {
-    return this.expenseRepository
+  async findOne(id: string) {
+    const data = await this.expenseRepository
       .createQueryBuilder('expense')
       .leftJoinAndSelect('expense.friends', 'friends')
       .where('expense.id = :id', { id })
-      .getOne()
-      .then((data) => data.toResponseObject(true));
+      .getOne();
+    return data.toResponseObject(true);
   }
 
   async update(
@@ -199,9 +201,10 @@ export class ExpenseService {
     const friendIds = friends.map((x) => x.id);
     const newFriends = updateExpenseDto.friendIds;
     if (!isEqual(friendIds, newFriends)) {
+      existExpense.friends = [];
       friends = await this.friendService.findByIds(newFriends);
     }
-    existExpense.friends = friends;
+    updateExpenseDto.friends = friends;
     const updateExpense = this.expenseRepository.merge(
       existExpense,
       updateExpenseDto,
@@ -213,7 +216,7 @@ export class ExpenseService {
     return removeRecord(id, this.expenseRepository);
   }
 
-  getAnalyzeTrend(query, user) {
+  getAnalyzeTrend(query: any, user: { id: any }) {
     let { startDate, endDate } = query;
 
     startDate ??= dayjs().startOf('year').format('YYYY-MM-DD');
@@ -252,7 +255,7 @@ export class ExpenseService {
     );
   }
 
-  async getAnalyzeType(dto, user) {
+  async getAnalyzeType(dto: any, user: { id: any }) {
     let { startDate, endDate } = dto;
 
     startDate ??= dayjs().startOf('year').format('YYYY-MM-DD');
@@ -282,5 +285,21 @@ export class ExpenseService {
     return this.expenseRepository
       .query(query, queryParams)
       .then((res) => res.map(format));
+  }
+
+  getAnalyzeTotalAmount(query: QueryTotalAmountDto, user: any) {
+    const { date, timeUnit } = query;
+    const { start, end } = getDateRange(date, timeUnit);
+    console.log(user.id, 'user.id');
+    return this.expenseRepository
+      .createQueryBuilder('expense')
+      .innerJoin('expense.createUser', 'user')
+      .select('SUM(expense.amount)', 'total')
+      .where('user.id = :userId', { userId: user.id })
+      .andWhere('expense.date BETWEEN :startDate AND :endDate', {
+        startDate: start.toDate(),
+        endDate: end.toDate(),
+      })
+      .getRawOne();
   }
 }

@@ -25,6 +25,7 @@ import { ExpenseModule } from './expense/expense.module';
 import { FriendModule } from './friend/friend.module';
 import { TransfersModule } from './transfers/transfers.module';
 import { TestModule } from './test/test.module';
+import { BudgetModule } from './budget/budget.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { TestModule } from './test/test.module';
         database: configService.get('DB_DATABASE', 'tcm_dev'), //数据库名
         timezone: '+08:00', //服务器上配置的时区
         // 空数据库，随便折腾，数据库中有数据时， 建议一定要谨慎点，建议关闭
-        synchronize: !isProd, //根据实体自动创建数据库表， 生产环境建议关闭
+        // synchronize: !isProd, //根据实体自动创建数据库表， 生产环境建议关闭
+        synchronize: true, //根据实体自动创建数据库表， 生产环境建议关闭
         logging: !isProd,
       }),
     }),
@@ -66,6 +68,7 @@ import { TestModule } from './test/test.module';
     FriendModule,
     TransfersModule,
     TestModule,
+    BudgetModule,
   ],
   controllers: [AppController, LunarController],
   providers: [AppService, LunarService],

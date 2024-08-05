@@ -23,7 +23,7 @@ export class HerbsService {
   ) {}
 
   async create(
-    user,
+    user: { id: any },
     createHerbDto: Omit<CreateHerbDto, 'meridians' | 'meridianString'>,
   ) {
     const { meridianIds } = createHerbDto;
@@ -49,7 +49,7 @@ export class HerbsService {
     };
 
     console.log(data, '???');
-    const newHerb = await this.herbRepository.create(data);
+    const newHerb = this.herbRepository.create(data);
     return (await this.herbRepository.save(newHerb)).id;
   }
 
@@ -75,7 +75,7 @@ export class HerbsService {
   }
 
   async findPage(query: QueryPageHerbDto) {
-    const qb = await this.herbRepository
+    const qb = this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
       .leftJoinAndSelect('herb.createUser', 'user')
@@ -92,10 +92,15 @@ export class HerbsService {
       'primaryIndication',
     ]);
     const { list, count } = await queryPage(qb, query);
-    return { list: list.map((x) => x.toResponseObject()), count };
+    return {
+      list: list.map((x: { toResponseObject: () => any }) =>
+        x.toResponseObject(),
+      ),
+      count,
+    };
   }
 
-  async findOne(id) {
+  async findOne(id: string) {
     const qb = this.herbRepository
       .createQueryBuilder('herb')
       .leftJoinAndSelect('herb.meridianList', 'meridianList')
@@ -110,12 +115,12 @@ export class HerbsService {
     return result.toResponseObject();
   }
 
-  async findByIds(ids) {
+  async findByIds(ids: any[]) {
     const list = await this.herbRepository.findByIds(ids);
     return list.map((x) => x.toResponseObject());
   }
 
-  async update(id, updateHerbDto: UpdateHerbDto, user) {
+  async update(id: string, updateHerbDto: UpdateHerbDto, user: { id: any }) {
     const exist = await this.herbRepository.findOne({
       where: { id },
     });
@@ -142,7 +147,7 @@ export class HerbsService {
     return (await this.herbRepository.save(updateHerb)).id;
   }
 
-  remove(id) {
+  remove(id: string) {
     return removeRecord(id, this.herbRepository);
   }
 }

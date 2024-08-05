@@ -19,7 +19,10 @@ export class VehicleMaintainService {
     private vehicleService: VehicleService,
   ) {}
 
-  async create(createUser, createVehicleMaintainDto: CreateVehicleMaintainDto) {
+  async create(
+    createUser: any,
+    createVehicleMaintainDto: CreateVehicleMaintainDto,
+  ) {
     const { name, vehicleId } = createVehicleMaintainDto;
     const existVehicleMaintain = await this.vehicleMaintainRepository.findOne({
       where: { name },
@@ -38,11 +41,11 @@ export class VehicleMaintainService {
       createUser,
       vehicle,
     };
-    const vehicleMaintain = await this.vehicleMaintainRepository.create(data);
+    const vehicleMaintain = this.vehicleMaintainRepository.create(data);
     return this.vehicleMaintainRepository.save(vehicleMaintain);
   }
 
-  async findAll(query: QueryVehicleMaintainDto, user) {
+  async findAll(query: QueryVehicleMaintainDto, user: { id: any }) {
     query.keyword ??= '';
     console.log(query, 'query');
     const qb = this.vehicleMaintainRepository
@@ -70,7 +73,7 @@ export class VehicleMaintainService {
     return qb.getMany();
   }
 
-  async findPage(query: QueryPageVehicleMaintainDto, user) {
+  async findPage(query: QueryPageVehicleMaintainDto, user: { id: any }) {
     query.keyword ??= '';
     const qb = this.vehicleMaintainRepository
       .createQueryBuilder('vehicle_maintain')
@@ -96,16 +99,13 @@ export class VehicleMaintainService {
     if (query.vehicleId) {
       qb.where(`vehicle.id = :vehicleId`, { vehicleId: query.vehicleId });
     }
-    // genLikeWhereConditions(qb, query, 'vehicle_maintain', ['licensePlate', 'vehicleOwnerName', 'vehicleTypeName',]);
-    // genWhereConditions(qb, query, 'vehicle_maintain', ['isOutRepair']);
-    // const count = await qb.getCount();
-    // const { page = 1, size = 10 } = query;
-    // qb.limit(size);
-    // qb.offset(size * (page - 1));
-    // const list = await qb.getMany();
     const { list, count } = await queryPage(qb, query);
-    return { list: list.map((x) => x.toResponseObject()), count };
-    // return { list, count };
+    return {
+      list: list.map((x: { toResponseObject: () => any }) =>
+        x.toResponseObject(),
+      ),
+      count,
+    };
   }
 
   getCountByVehicleId(id: string) {
@@ -133,13 +133,8 @@ export class VehicleMaintainService {
       .getOne();
   }
 
-  async update(
-    id: string,
-    createUser,
-    updateVehicleMaintainDto: UpdateVehicleMaintainDto,
-  ) {
+  async update(id: string, updateVehicleMaintainDto: UpdateVehicleMaintainDto) {
     const existVehicleMaintain = await this.findOne(id);
-    console.log(existVehicleMaintain, 'existVehicleMaintain');
     if (!existVehicleMaintain) {
       throw new HttpException(
         `id为${id}的维修记录不存在`,

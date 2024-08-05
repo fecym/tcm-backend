@@ -30,19 +30,19 @@ export class TransfersController {
 
   @ApiOperation({ summary: '创建转账记录' })
   @Post()
-  create(@Body() createTransferDto: CreateTransferDto, @Req() req) {
+  create(@Body() createTransferDto: CreateTransferDto, @Req() req: any) {
     return this.transfersService.create(createTransferDto, req.user);
   }
 
   @ApiOperation({ summary: '查询转账记录' })
   @Get()
-  findAll(@Query() query: QueryTransferDto, @Req() req) {
+  findAll(@Query() query: QueryTransferDto, @Req() req: any) {
     return this.transfersService.findAll(query, req.user);
   }
 
   @ApiOperation({ summary: '分页查询转账记录' })
   @Get('page')
-  findPage(@Query() query: QueryPageTransferDto, @Req() req) {
+  findPage(@Query() query: QueryPageTransferDto, @Req() req: any) {
     return this.transfersService.findPage(query, req.user);
   }
 

@@ -1,12 +1,23 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { CreateExpenseDto } from './create-expense.dto';
-import { IsEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { PayTypeEnum } from '../../enum';
+import { Transform } from 'class-transformer';
 
-export class QueryExpenseDto extends PartialType(CreateExpenseDto) {
+export class QueryExpenseDto {
   @ApiPropertyOptional({ description: '消费名称' })
-  @IsEmpty()
   @IsOptional()
   name: string;
+
+  @ApiProperty({
+    description: '支付方式',
+    enum: PayTypeEnum,
+    default: PayTypeEnum.ALIPAY,
+  })
+  @IsString()
+  @IsOptional()
+  @Transform(({ value }) => (value === '' ? null : value))
+  @IsEnum(PayTypeEnum)
+  payType: PayTypeEnum;
 
   @ApiProperty({ description: '消费类型' })
   @IsString()
@@ -15,11 +26,11 @@ export class QueryExpenseDto extends PartialType(CreateExpenseDto) {
   @ApiProperty({ description: '月份', required: false })
   month: string;
 
-  @ApiProperty({ description: '开始时间', required: false })
-  startTime: Date;
+  @ApiProperty({ description: '开始日期', required: false })
+  startDate: Date;
 
-  @ApiProperty({ description: '结束时间', required: false })
-  endTime: Date;
+  @ApiProperty({ description: '结束日期', required: false })
+  endDate: Date;
 }
 
 export class QueryPageExpenseDto extends PartialType(QueryExpenseDto) {

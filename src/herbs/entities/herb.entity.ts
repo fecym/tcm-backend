@@ -20,7 +20,7 @@ export const herbCategoryTypes = ['上经', '中经', '下经'];
 @Entity('herb')
 export class HerbEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ length: 20, unique: true })
   name: string;

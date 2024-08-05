@@ -28,7 +28,7 @@ export class HerbsController {
 
   @ApiOperation({ summary: '添加本草' })
   @Post()
-  create(@Body() createHerbDto: CreateHerbDto, @Req() req) {
+  create(@Body() createHerbDto: CreateHerbDto, @Req() req: any) {
     return this.herbsService.create(req.user, createHerbDto);
   }
 
@@ -55,7 +55,7 @@ export class HerbsController {
   update(
     @Param('id') id: string,
     @Body() updateHerbDto: UpdateHerbDto,
-    @Req() req,
+    @Req() req: any,
   ) {
     return this.herbsService.update(id, updateHerbDto, req.user);
   }

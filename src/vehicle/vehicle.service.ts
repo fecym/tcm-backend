@@ -14,7 +14,7 @@ export class VehicleService {
     private vehicleRepository: Repository<VehicleEntity>,
   ) {}
 
-  async create(createVehicleDto: CreateVehicleDto, createUser) {
+  async create(createVehicleDto: CreateVehicleDto, createUser: any) {
     const { licensePlate } = createVehicleDto;
     const existVehicle = await this.vehicleRepository.findOne({
       where: { licensePlate },
@@ -30,7 +30,7 @@ export class VehicleService {
     return this.vehicleRepository.save(newVehicle);
   }
 
-  findAll(query: QueryVehicleDto, user) {
+  findAll(query: QueryVehicleDto, user: { id: any }) {
     console.log(user, 'user');
     query.keyword ??= '';
     const qb = this.vehicleRepository
@@ -49,7 +49,7 @@ export class VehicleService {
     return qb.getMany();
   }
 
-  async findPage(query: QueryPageVehicleDto, user) {
+  async findPage(query: QueryPageVehicleDto, user: { id: any }) {
     query.keyword ??= '';
     const qb = this.vehicleRepository
       .createQueryBuilder('vehicle')
@@ -66,12 +66,12 @@ export class VehicleService {
     ]);
 
     const { count, list } = await queryPage(qb, query);
-    // const count = await qb.getCount();
-    // const { page = 1, size = 10 } = query;
-    // qb.limit(size);
-    // qb.offset(size * (page - 1));
-    // const list = await qb.getMany();
-    return { list: list.map((x) => x.toResponseObject()), count };
+    return {
+      list: list.map((x: { toResponseObject: () => any }) =>
+        x.toResponseObject(),
+      ),
+      count,
+    };
   }
 
   findOne(id: string) {
@@ -80,7 +80,6 @@ export class VehicleService {
 
   async update(id: string, updateVehicleDto: UpdateVehicleDto) {
     const existVehicle = await this.findOne(id);
-    console.log(existVehicle, 'existVehicle');
     if (!existVehicle) {
       throw new HttpException(`id为${id}的车辆不存在`, HttpStatus.NOT_FOUND);
     }

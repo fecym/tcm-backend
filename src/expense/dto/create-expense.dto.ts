@@ -63,4 +63,8 @@ export class CreateExpenseDto {
   @IsOptional()
   @IsUUID('4', { each: true })
   friendIds?: string[];
+
+  @IsArray()
+  @IsOptional()
+  friends?: Array<NonNullable<unknown>>;
 }

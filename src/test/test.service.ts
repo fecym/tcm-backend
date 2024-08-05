@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { TestEntity } from './entities/test.entity';
 import { ExpenseService } from '../expense/expense.service';
 import { generateDateRange, getRandomNumber } from '../utils';
-import { PayTypeEnum } from '../enum';
+import { ExpenseTypeEnum, PayTypeEnum, TransferTypeEnum } from "../enum";
 import { TransfersService } from '../transfers/transfers.service';
 import * as dayjs from 'dayjs';
 
@@ -17,12 +17,12 @@ export class TestService {
     private readonly transferService: TransfersService,
   ) {}
 
-  getRandomItem(arr) {
+  getRandomItem(arr: string | any[]) {
     const randomIndex = Math.floor(Math.random() * arr.length);
     return arr[randomIndex];
   }
 
-  batchInsertExpense(user) {
+  batchInsertExpense(user: any) {
     const arr = [
       '买烟',
       '台球',
@@ -45,8 +45,8 @@ export class TestService {
             {
               name: this.getRandomItem(arr),
               date,
-              amount: getRandomNumber(30, 100),
-              expenseType: getRandomNumber(1, 11, 0),
+              amount: getRandomNumber(30, 100) as any,
+              expenseType: getRandomNumber(1, 11, 0) as ExpenseTypeEnum,
               payType: PayTypeEnum.WECHAT,
               remark: '',
             },
@@ -58,15 +58,15 @@ export class TestService {
     return 'ok';
   }
 
-  batchInsertTransfer(user) {
+  batchInsertTransfer(user: any) {
     generateDateRange('2024-01-01', dayjs().format('YYYY-MM-DD')).map(
       (transferDate) => {
         this.transferService
           .create(
             {
               transferDate,
-              amount: getRandomNumber(1000, 9999),
-              transferType: getRandomNumber(0, 4, 0),
+              amount: getRandomNumber(1000, 9999) as any,
+              transferType: getRandomNumber(0, 4, 0) as TransferTypeEnum,
               transferMode: PayTypeEnum.WECHAT,
               remark: '',
               friendId: '696fe8c1-9ebd-4a8d-9023-bae991e028ea',

@@ -22,15 +22,11 @@ export class QueryTransferDto extends PartialType(CreateTransferDto) {
   @IsOptional()
   friendId: string;
 
-  @ApiPropertyOptional({ description: '开始日期' })
-  @IsDateString()
-  @IsOptional()
-  startDate;
+  @ApiProperty({ description: '开始日期', required: false })
+  startDate: Date;
 
-  @ApiPropertyOptional({ description: '结束日期' })
-  @IsDateString()
-  @IsOptional()
-  endDate;
+  @ApiProperty({ description: '结束日期', required: false })
+  endDate: Date;
 }
 
 export class QueryPageTransferDto extends PartialType(QueryTransferDto) {

@@ -2,6 +2,7 @@ import * as dayjs from 'dayjs';
 import { hashSync } from 'bcryptjs';
 import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
+import { DateIntervalEnum } from "../enum";
 
 export * from './query';
 
@@ -106,6 +107,40 @@ export function generateDateRange(
   return dateRange;
 }
 
-export function getRandomNumber(min, max, fractionDigits = 2) {
+export function getRandomNumber(min: number, max: number, fractionDigits = 2) {
   return (Math.random() * (max - min) + min).toFixed(fractionDigits);
+}
+
+export function getDateRange(
+  date: Date | string,
+  timeUnit: DateIntervalEnum,
+): { start: dayjs.Dayjs; end: dayjs.Dayjs } {
+  date ??= dayjs().format('YYYY-MM-DD');
+  timeUnit ??= DateIntervalEnum.DAY;
+  const inputDate = dayjs(date);
+
+  const dateRange = {
+    [DateIntervalEnum.DAY]: () => ({
+      start: inputDate.startOf('day'),
+      end: inputDate.endOf('day'),
+    }),
+    [DateIntervalEnum.WEEK]: () => ({
+      start: inputDate.startOf('week'),
+      end: inputDate.endOf('week'),
+    }),
+    [DateIntervalEnum.MONTH]: () => ({
+      start: inputDate.startOf('month'),
+      end: inputDate.endOf('month'),
+    }),
+    [DateIntervalEnum.YEAR]: () => ({
+      start: inputDate.startOf('year'),
+      end: inputDate.endOf('year'),
+    }),
+  };
+
+  if (!dateRange[timeUnit]) {
+    throw new Error('Invalid timeUnit');
+  }
+
+  return dateRange[timeUnit]();
 }

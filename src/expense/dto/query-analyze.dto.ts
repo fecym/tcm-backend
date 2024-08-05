@@ -23,3 +23,19 @@ export class QueryAnalyzeDto extends PartialType(QueryDateRangeDto) {
   @IsOptional()
   expenseTypes: string;
 }
+
+export class QueryTotalAmountDto {
+  @ApiProperty({
+    description: '时间单位',
+    enum: DateIntervalEnum,
+    default: DateIntervalEnum.YEAR,
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  @IsEnum(DateIntervalEnum)
+  timeUnit: DateIntervalEnum;
+
+  @ApiProperty({ description: '日期', required: false })
+  date: Date;
+}

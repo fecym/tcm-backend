@@ -29,13 +29,13 @@ export class FriendController {
 
   @ApiOperation({ summary: '新增朋友' })
   @Post()
-  create(@Body() createFriendDto: CreateFriendDto, @Req() req) {
+  create(@Body() createFriendDto: CreateFriendDto, @Req() req: any) {
     return this.friendService.create(createFriendDto, req.user);
   }
 
   @ApiOperation({ summary: '查找所有朋友' })
   @Get()
-  findAll(@Query() query: QueryFriendDto, @Req() req) {
+  findAll(@Query() query: QueryFriendDto, @Req() req: any) {
     return this.friendService.findAll(query, req.user);
   }
 

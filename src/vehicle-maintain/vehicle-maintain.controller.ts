@@ -46,13 +46,13 @@ export class VehicleMaintainController {
 
   @ApiOperation({ summary: '获取维系工单列表' })
   @Get()
-  findAll(@Query() query: QueryVehicleMaintainDto, @Req() req) {
+  findAll(@Query() query: QueryVehicleMaintainDto, @Req() req: any) {
     return this.vehicleMaintainService.findAll(query, req.user);
   }
 
   @ApiOperation({ summary: '分页查询车辆' })
   @Get('page')
-  findPage(@Query() query: QueryPageVehicleDto, @Req() req) {
+  findPage(@Query() query: QueryPageVehicleDto, @Req() req: any) {
     return this.vehicleMaintainService.findPage(query, req.user);
   }
 
@@ -76,14 +76,9 @@ export class VehicleMaintainController {
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Req() req,
     @Body() updateVehicleMaintainDto: UpdateVehicleMaintainDto,
   ) {
-    return this.vehicleMaintainService.update(
-      id,
-      req.user,
-      updateVehicleMaintainDto,
-    );
+    return this.vehicleMaintainService.update(id, updateVehicleMaintainDto);
   }
 
   @Delete(':id')

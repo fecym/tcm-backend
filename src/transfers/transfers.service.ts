@@ -8,11 +8,14 @@ import {
 import { genWhereConditions, queryPage, removeRecord } from '../utils';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransferEntity } from './entities/transfer.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FriendService } from '../friend/friend.service';
 import { isEqual } from 'lodash';
 
-function applyQueryConditions(qb, query) {
+function applyQueryConditions(
+  qb: SelectQueryBuilder<any>,
+  query: Record<string, any> | QueryTransferDto | QueryPageTransferDto,
+) {
   genWhereConditions(qb, query, 'transfer', [
     'friendId',
     'transferType',
@@ -26,7 +29,6 @@ function applyQueryConditions(qb, query) {
     );
   }
   if (query.transferTypes) {
-    console.log(query.transferTypes.split(','), '====');
     qb.andWhere('transfer.transferType IN (:...transferType)', {
       transferType: query.transferTypes.split(','),
     });
@@ -41,7 +43,7 @@ export class TransfersService {
     private readonly friendService: FriendService,
   ) {}
 
-  async create(createTransferDto: CreateTransferDto, user) {
+  async create(createTransferDto: CreateTransferDto, user: { id: any }) {
     if (!createTransferDto.friendId) return;
     const transferFriend = await this.friendService.findOne(
       createTransferDto.friendId,
@@ -55,28 +57,31 @@ export class TransfersService {
     return this.transfersRepository.save(transfer);
   }
 
-  findAll(query: QueryTransferDto, user) {
+  async findAll(query: QueryTransferDto, user: { id: any }) {
     const qb = this.transfersRepository
       .createQueryBuilder('transfer')
       .innerJoin('transfer.createUser', 'user')
       .leftJoinAndSelect('transfer.transferFriend', 'friend')
       .where('user.id = :userId', { userId: user.id })
-      .orderBy('transfer.create_time', 'DESC');
+      .orderBy('transfer.create_time', 'DESC')
+      .addOrderBy('transfer.transfer_date', 'DESC');
     applyQueryConditions(qb, query);
-    return qb.getMany().then((list) => list.map((x) => x.toResponseObject()));
+    const list = await qb.getMany();
+    return list.map((x) => x.toResponseObject());
   }
 
   async findPage(
     query: QueryPageTransferDto,
-    user,
+    user: { id: any },
   ): Promise<{ list: TransferEntity[]; count: number }> {
     const qb = this.transfersRepository
       .createQueryBuilder('transfer')
       .innerJoin('transfer.createUser', 'user')
       .leftJoinAndSelect('transfer.transferFriend', 'friends')
       .where('user.id = :userId', { userId: user.id })
-      .orderBy('transfer.create_time', 'DESC');
-    await applyQueryConditions(qb, query);
+      .orderBy('transfer.create_time', 'DESC')
+      .addOrderBy('transfer.transfer_date', 'DESC');
+    applyQueryConditions(qb, query);
 
     qb.select([
       'transfer.id',
@@ -91,16 +96,21 @@ export class TransfersService {
     ]);
 
     const { list, count } = await queryPage(qb, query);
-    return { list: list.map((x) => x.toResponseObject()), count };
+    return {
+      list: list.map((x: { toResponseObject: () => any }) =>
+        x.toResponseObject(),
+      ),
+      count,
+    };
   }
 
-  findOne(id) {
-    return this.transfersRepository
+  async findOne(id: string) {
+    const data = await this.transfersRepository
       .createQueryBuilder('transfer')
       .leftJoinAndSelect('transfer.transferFriend', 'friends')
       .where('transfer.id = :id', { id })
-      .getOne()
-      .then((data) => data.toResponseObject());
+      .getOne();
+    return data.toResponseObject();
   }
 
   async update(@Param('id') id: string, updateTransferDto: UpdateTransferDto) {
@@ -110,7 +120,7 @@ export class TransfersService {
     }
     let transferFriend = existTransfer.transferFriend;
     const newFriendId = updateTransferDto.friendId;
-    if (!isEqual(transferFriend.id, newFriendId)) {
+    if (!isEqual(transferFriend?.id, newFriendId)) {
       transferFriend = await this.friendService.findOne(newFriendId);
     }
     const updateExpense = this.transfersRepository.merge(existTransfer, {
@@ -120,7 +130,7 @@ export class TransfersService {
     return this.transfersRepository.save(updateExpense);
   }
 
-  remove(id) {
+  remove(id: string) {
     return removeRecord(id, this.transfersRepository);
   }
 }
