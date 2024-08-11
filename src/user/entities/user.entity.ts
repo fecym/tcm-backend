@@ -68,6 +68,7 @@ export class UserEntity {
   toResponseObject() {
     const obj: any = { ...this };
     obj.roleName = RoleDesc[obj.role];
+    delete obj.password;
     return obj;
   }
 }

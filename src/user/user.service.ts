@@ -38,16 +38,15 @@ export class UserService {
     if (!createUser.password) {
       createUser.password = '000000';
     }
-    const newUser = await this.userRepository.create(createUser);
+    const newUser = this.userRepository.create(createUser);
     // save 才会插入数据
     return await this.userRepository.save(newUser);
     // return await this.userRepository.findOne({ where: { username } });
   }
 
-  findOne(id) {
-    return this.userRepository
-      .findOne({ where: { id } })
-      .then(formatInfoResponse);
+  async findOne(id: string) {
+    const data = await this.userRepository.findOne({ where: { id } });
+    return formatInfoResponse(data);
   }
 
   findByUsername(username: string): Promise<UserEntity> {
@@ -79,7 +78,10 @@ export class UserService {
     }
   }
 
-  async updatePassword(id, data) {
+  async updatePassword(
+    id: string,
+    data: { password: any; newPassword: string },
+  ) {
     const exist = await this.findOne(id);
     console.log(exist, 'existUser');
     if (!exist) {
@@ -93,9 +95,8 @@ export class UserService {
     return this.userRepository.save(exist);
   }
 
-  async update(id, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const exist = await this.findOne(id);
-    console.log(exist, 'existUser');
     if (!exist) {
       throw new HttpException(`用户不存在`, HttpStatus.NOT_FOUND);
     }
@@ -107,7 +108,7 @@ export class UserService {
     return removeRecord(id, this.userRepository);
   }
 
-  comparePassword(password, libPassword) {
+  comparePassword(password: any, libPassword: any) {
     return compareSync(password, libPassword);
   }
 }

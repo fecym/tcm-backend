@@ -25,7 +25,7 @@ export class AuthService {
     return { token };
   }
 
-  getUser(user) {
+  getUser(user: UserEntity) {
     return this.userService.findOne(user.id);
   }
 }

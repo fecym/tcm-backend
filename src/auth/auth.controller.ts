@@ -21,7 +21,7 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('login')
-  async login(@Body() user: LoginDto, @Req() req) {
-    return await this.authService.login(req.user);
+  login(@Body() user: LoginDto, @Req() req: any) {
+    return this.authService.login(req.user);
   }
 }
