@@ -3,8 +3,8 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
-  Req,
-} from '@nestjs/common';
+  Req, Delete
+} from "@nestjs/common";
 import { TestService } from './test.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -29,5 +29,11 @@ export class TestController {
   @Post('transfer')
   batchInsertTransfer(@Req() req: any) {
     return this.testService.batchInsertTransfer(req.user);
+  }
+
+  @ApiOperation({ summary: '删除所有转账数据' })
+  @Delete('deleteAll/transfer')
+  deleteAllTransfer(@Req() req: any) {
+    return this.testService.deleteAllTransfer(req.user);
   }
 }
