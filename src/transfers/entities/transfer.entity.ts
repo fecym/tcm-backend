@@ -17,8 +17,12 @@ export class TransferEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'date', name: 'transfer_date' })
-  transferDate: Date;
+  @Column({
+    type: 'datetime',
+    name: 'transfer_time',
+    transformer: { to: transformDateTime, from: transformDateTime },
+  })
+  transferTime: Date;
 
   @Column('decimal', {
     precision: 10,

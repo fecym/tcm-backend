@@ -1,14 +1,9 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { CreateTransferDto } from './create-transfer.dto';
-import { IsDateString, IsEmpty, IsOptional } from 'class-validator';
+import { IsEmpty, IsOptional } from 'class-validator';
 import { PayTypeEnum } from '../../enum';
 
 export class QueryTransferDto extends PartialType(CreateTransferDto) {
-  @ApiPropertyOptional({ description: '转账日期' })
-  @IsDateString()
-  @IsOptional()
-  transferDate: Date;
-
   @ApiProperty({ description: '转账类型' })
   transferTypes: string | number;
 

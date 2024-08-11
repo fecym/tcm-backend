@@ -24,7 +24,7 @@ function applyQueryConditions(
   const { startDate, endDate } = query;
   if (startDate && endDate) {
     qb.andWhere(
-      'transfer.transferDate >= :startDate AND transfer.transferDate <= :endDate',
+      'transfer.transferTime >= :startDate AND transfer.transferTime <= :endDate',
       { startDate, endDate },
     );
   }
@@ -64,7 +64,7 @@ export class TransfersService {
       .leftJoinAndSelect('transfer.transferFriend', 'friend')
       .where('user.id = :userId', { userId: user.id })
       .orderBy('transfer.create_time', 'DESC')
-      .addOrderBy('transfer.transfer_date', 'DESC');
+      .addOrderBy('transfer.transfer_time', 'DESC');
     applyQueryConditions(qb, query);
     const list = await qb.getMany();
     return list.map((x) => x.toResponseObject());
@@ -80,12 +80,12 @@ export class TransfersService {
       .leftJoinAndSelect('transfer.transferFriend', 'friends')
       .where('user.id = :userId', { userId: user.id })
       .orderBy('transfer.create_time', 'DESC')
-      .addOrderBy('transfer.transfer_date', 'DESC');
+      .addOrderBy('transfer.transfer_time', 'DESC');
     applyQueryConditions(qb, query);
 
     qb.select([
       'transfer.id',
-      'transfer.transferDate',
+      'transfer.transferTime',
       'transfer.amount',
       'transfer.transferType',
       'transfer.transferMode',
@@ -132,5 +132,9 @@ export class TransfersService {
 
   remove(id: string) {
     return removeRecord(id, this.transfersRepository);
+  }
+
+  removeAll(user: any) {
+    return this.transfersRepository.delete({ createUser: user });
   }
 }

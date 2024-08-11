@@ -9,11 +9,11 @@ import {
 import { PayTypeEnum, TransferTypeEnum } from '../../enum';
 
 export class CreateTransferDto {
-  @ApiPropertyOptional({ description: '转账日期' })
+  @ApiPropertyOptional({ description: '转账时间' })
   @IsDateString()
   @IsNotEmpty()
   @IsOptional()
-  transferDate: Date;
+  transferTime: Date;
 
   @ApiPropertyOptional({ description: '转账描述' })
   @IsString()
