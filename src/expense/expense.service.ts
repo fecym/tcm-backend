@@ -27,6 +27,8 @@ import { DateIntervalEnum } from '../enum';
 import { ExpenseTypeDesc } from '../enum/enumDesc';
 import * as dayjs from 'dayjs';
 import { QueryAnalyzeDto, QueryTotalAmountDto } from './dto/query-analyze.dto';
+import { QueryExpenseDto, QueryPageExpenseDto } from './dto/query-expense.dto';
+import { QueryDateRangeDto } from 'src/dto/date.dto';
 
 async function applyQueryConditions(qb, query): Promise<void> {
   if (query.month) {
@@ -88,13 +90,17 @@ export class ExpenseService {
     return this.expenseRepository.save(expense);
   }
 
-  async findAll(query, user): Promise<ExpenseEntity[]> {
+  async findAll(
+    query: QueryExpenseDto,
+    user: { id: any },
+  ): Promise<ExpenseEntity[]> {
     const qb = this.expenseRepository
       .createQueryBuilder('expense')
       .innerJoin('expense.createUser', 'user')
       .leftJoinAndSelect('expense.friends', 'friends')
       .where('user.id = :userId', { userId: user.id })
-      .orderBy('expense.create_time', 'DESC');
+      .orderBy('expense.date', 'DESC')
+      .addOrderBy('expense.create_time', 'DESC');
     await applyQueryConditions(qb, query);
 
     qb.select([
@@ -114,22 +120,23 @@ export class ExpenseService {
   }
 
   async findPage(
-    query,
-    user,
+    query: QueryPageExpenseDto,
+    user: { id: any },
   ): Promise<{ list: ExpenseEntity[]; count: number }> {
     const qb = this.expenseRepository
       .createQueryBuilder('expense')
       .innerJoin('expense.createUser', 'user')
       .leftJoinAndSelect('expense.friends', 'friends')
       .where('user.id = :userId', { userId: user.id })
-      .orderBy('expense.create_time', 'DESC');
+      .orderBy('expense.date', 'DESC')
+      .addOrderBy('expense.create_time', 'DESC');
     await applyQueryConditions(qb, query);
 
     const { list, count } = await queryPage(qb, query);
     return { list: list.map((x) => x.toResponseObject()), count };
   }
 
-  async getGroupedByDay(query, user) {
+  async getGroupedByDay(query: QueryDateRangeDto, user: { id: any }) {
     const { startDate, endDate } = query;
     if (!startDate || !endDate) {
       throw new HttpException(
