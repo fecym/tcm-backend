@@ -181,10 +181,13 @@ export class ExpenseService {
       return acc;
     }, {});
 
-    return lunarDateList.map((lunarDate) => ({
-      ...lunarDate,
-      list: groupedExpenses[lunarDate.date] || [],
-    }));
+    return lunarDateList.map((lunarDate) => {
+      const list = groupedExpenses[lunarDate.date] || [];
+      const totalAmount = list.reduce((acc: any, expense: { amount: any }) => {
+        return acc + +expense.amount;
+      }, 0);
+      return { ...lunarDate, totalAmount, list };
+    });
   }
 
   async findOne(id: string) {
