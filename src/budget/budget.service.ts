@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BudgetEntity } from './entities/budget.entity';
 import { genLikeWhereConditions, removeRecord } from '../utils';
+import { DatabaseUtils } from "../utils/DatabaseUtils";
 
 @Injectable()
 export class BudgetService {
@@ -55,5 +56,8 @@ export class BudgetService {
 
   remove(id: string) {
     return removeRecord(id, this.budgetRepository);
+  }
+  cleanDirtyData(): Promise<number> {
+    return DatabaseUtils.cleanDirtyData(this.budgetRepository);
   }
 }

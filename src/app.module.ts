@@ -26,6 +26,8 @@ import { FriendModule } from './friend/friend.module';
 import { TransfersModule } from './transfers/transfers.module';
 import { TestModule } from './test/test.module';
 import { BudgetModule } from './budget/budget.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CreateTimeInterceptor } from './core/interceptor/create-time.interceptor';
 
 @Module({
   imports: [
@@ -71,7 +73,14 @@ import { BudgetModule } from './budget/budget.module';
     BudgetModule,
   ],
   controllers: [AppController, LunarController],
-  providers: [AppService, LunarService],
+  providers: [
+    AppService,
+    LunarService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CreateTimeInterceptor,
+    },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

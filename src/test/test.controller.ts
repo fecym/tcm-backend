@@ -36,4 +36,10 @@ export class TestController {
   deleteAllTransfer(@Req() req: any) {
     return this.testService.deleteAllTransfer(req.user);
   }
+
+  @ApiOperation({ summary: '删除预算表没有ID的数据' })
+  @Delete('delete/budget/dirty')
+  cleanBudgetDirtyData() {
+    return this.testService.cleanBudgetDirtyData();
+  }
 }

@@ -6,6 +6,7 @@ import { ExpenseService } from '../expense/expense.service';
 import { generateDateRange, getRandomNumber } from '../utils';
 import { ExpenseTypeEnum, PayTypeEnum, TransferTypeEnum } from '../enum';
 import { TransfersService } from '../transfers/transfers.service';
+import { BudgetService } from '../budget/budget.service';
 import * as dayjs from 'dayjs';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class TestService {
     private readonly testRepository: Repository<TestEntity>,
     private readonly expenseService: ExpenseService,
     private readonly transferService: TransfersService,
+    private readonly budgetService: BudgetService,
   ) {}
 
   getRandomItem(arr: string | any[]) {
@@ -96,5 +98,9 @@ export class TestService {
   deleteAllTransfer(user: any) {
     this.userCheck(user);
     return this.transferService.removeAll(user);
+  }
+  cleanBudgetDirtyData() {
+    // this.userCheck(user);
+    return this.budgetService.cleanDirtyData();
   }
 }

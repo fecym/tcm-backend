@@ -12,6 +12,9 @@ import { LunarService } from '../lunar/lunar.service';
 import { TransferEntity } from '../transfers/entities/transfer.entity';
 import { TransfersModule } from '../transfers/transfers.module';
 import { TransfersService } from '../transfers/transfers.service';
+import { BudgetEntity } from '../budget/entities/budget.entity';
+import { BudgetModule } from '../budget/budget.module';
+import { BudgetService } from '../budget/budget.service';
 
 @Module({
   imports: [
@@ -20,12 +23,20 @@ import { TransfersService } from '../transfers/transfers.service';
       ExpenseEntity,
       FriendEntity,
       TransferEntity,
+      BudgetEntity,
     ]),
     TransfersModule,
     ExpenseModule,
     FriendModule,
+    BudgetModule,
   ],
   controllers: [TestController],
-  providers: [TestService, ExpenseService, LunarService, TransfersService],
+  providers: [
+    TestService,
+    ExpenseService,
+    LunarService,
+    TransfersService,
+    BudgetService,
+  ],
 })
 export class TestModule {}
