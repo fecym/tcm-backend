@@ -76,7 +76,7 @@ export class FriendService {
     return this.friendRepository.save(updateFriend);
   }
 
-  async remove(id) {
+  async remove(id: string) {
     await checkReferencedRecords(this.entityManager, FriendEntity, id);
     return removeRecord(id, this.friendRepository);
   }

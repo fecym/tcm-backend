@@ -1,17 +1,18 @@
 import * as dayjs from 'dayjs';
 import { hashSync } from 'bcryptjs';
 import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
-import { EntityManager } from 'typeorm';
-import { DateIntervalEnum } from "../enum";
+import { EntityManager, EntityTarget, Repository } from 'typeorm';
+import { DateIntervalEnum } from '../enum';
+
 
 export * from './query';
 
-export function isEmpty(value) {
+export function isEmpty(value: string | any[]) {
   if (Array.isArray(value)) return value.length === 0;
   return value === null || value === undefined || value === '';
 }
 
-export function getDuplicateName(str) {
+export function getDuplicateName(str: string) {
   const regex = /'([^']+)'/;
   const match = str.match(regex);
   return match?.[1] ?? '';
@@ -36,12 +37,18 @@ export function setPassword(password: string) {
   return hashSync(password, 10);
 }
 
-export function hasExist(id, repository, key, value) {
+export function hasExist(
+  repository: {
+    findOne: (arg0: { where: { [x: number]: any } }) => any;
+  },
+  key: string,
+  value: any,
+) {
   return repository.findOne({ where: { [key]: value } });
 }
 
-export function removeRecord(id, repository) {
-  return hasExist(id, repository, 'id', id).then((exist) => {
+export function removeRecord(id: string, repository: Repository<any>) {
+  return hasExist(repository, 'id', id).then((exist: any) => {
     if (!exist) {
       throw new HttpException(`该记录不存在`, HttpStatus.NOT_FOUND);
     }
@@ -53,19 +60,22 @@ export function formatListResponse(list = []) {
   return list.map((x) => x.toResponseObject());
 }
 
-export function formatInfoResponse(data) {
+export function formatInfoResponse(data: any) {
   return data?.toResponseObject() ?? null;
 }
 
-export function getTableName(entityManager: EntityManager, entity): string {
+export function getTableName(
+  entityManager: EntityManager,
+  entity: EntityTarget<any>,
+): string {
   const metadata = entityManager.connection.getMetadata(entity);
   return metadata.tableName;
 }
 
 export async function checkReferencedRecords(
   entityManager: EntityManager,
-  entity,
-  id,
+  entity: EntityTarget<any>,
+  id: any,
 ) {
   const tableName = getTableName(entityManager, entity);
   const relatedRecords = await entityManager.query(

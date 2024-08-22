@@ -1,5 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 import { isEmpty } from './index';
+import { VehicleEntity } from 'src/vehicle/entities/vehicle.entity';
 
 export function genWhereConditions(
   qb: SelectQueryBuilder<any>,
@@ -44,8 +45,8 @@ export function genLikeWhereConditions(
 export function genWhereDateRangeConditions(
   qb: SelectQueryBuilder<any>,
   queryBuilderAlias: string,
-  startDate,
-  endDate,
+  startDate: Date,
+  endDate: Date,
 ) {
   qb.andWhere(
     `${queryBuilderAlias}.date >= :startDate AND ${queryBuilderAlias}.date < :endDate`,
@@ -57,7 +58,7 @@ export function genWhereDateRangeConditions(
 }
 
 export function genWhereOrConditions(
-  qb,
+  qb: SelectQueryBuilder<VehicleEntity>,
   queryBuilderAlias: string,
   query: Record<string, any>,
   keys: string[] = [],
@@ -71,7 +72,7 @@ export function genWhereOrConditions(
   qb.where(`(${conditions})`, { keyword: `%${query.keyword}%` });
 }
 
-export async function queryPage(qb, query) {
+export async function queryPage(qb: SelectQueryBuilder<any>, query: any) {
   const count = await qb.getCount();
   const { page = 1, size = 10 } = query;
   qb.limit(size);
