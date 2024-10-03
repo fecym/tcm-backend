@@ -7,8 +7,8 @@ import {
   Delete,
   UseGuards,
   Req,
-  Query,
-} from '@nestjs/common';
+  Query, UseInterceptors
+} from "@nestjs/common";
 import { TransfersService } from './transfers.service';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 import { UpdateTransferDto } from './dto/update-transfer.dto';
@@ -19,15 +19,16 @@ import {
   QueryPageTransferDto,
   QueryTransferDto,
 } from './dto/query-transfer.dto';
+import { CreateTimeInterceptor } from '../core/interceptor/create-time.interceptor';
 
 @ApiTags('转账记录')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles('1', '4')
 @Controller('transfers')
+@UseInterceptors(CreateTimeInterceptor)
 export class TransfersController {
   constructor(private readonly transfersService: TransfersService) {}
-
   @ApiOperation({ summary: '创建转账记录' })
   @Post()
   create(@Body() createTransferDto: CreateTransferDto, @Req() req: any) {

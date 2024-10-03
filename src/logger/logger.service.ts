@@ -22,7 +22,7 @@ const logger = winston.createLogger({
   level: 'debug', // 设置日志级别为 debug
   format: winston.format.combine(winston.format.timestamp(), logFormat),
   transports: [
-    // new winston.transports.Console(),
+    new winston.transports.Console(),
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
     new winston.transports.File({ filename: 'logs/combined.log' }),
   ],

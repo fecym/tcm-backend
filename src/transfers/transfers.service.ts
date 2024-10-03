@@ -11,30 +11,6 @@ import { TransferEntity } from './entities/transfer.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FriendService } from '../friend/friend.service';
 import { isEqual } from 'lodash';
-
-function applyQueryConditions(
-  qb: SelectQueryBuilder<any>,
-  query: Record<string, any> | QueryTransferDto | QueryPageTransferDto,
-) {
-  genWhereConditions(qb, query, 'transfer', [
-    'friendId',
-    'transferType',
-    'transferMode',
-  ]);
-  const { startDate, endDate } = query;
-  if (startDate && endDate) {
-    qb.andWhere(
-      'transfer.transferTime >= :startDate AND transfer.transferTime <= :endDate',
-      { startDate, endDate },
-    );
-  }
-  if (query.transferTypes) {
-    qb.andWhere('transfer.transferType IN (:...transferType)', {
-      transferType: query.transferTypes.split(','),
-    });
-  }
-}
-
 @Injectable()
 export class TransfersService {
   constructor(
@@ -57,31 +33,31 @@ export class TransfersService {
     return this.transfersRepository.save(transfer);
   }
 
-  async findAll(query: QueryTransferDto, user: { id: any }) {
-    const qb = this.transfersRepository
-      .createQueryBuilder('transfer')
-      .innerJoin('transfer.createUser', 'user')
-      .leftJoinAndSelect('transfer.transferFriend', 'friend')
-      .where('user.id = :userId', { userId: user.id })
-      .orderBy('transfer.create_time', 'DESC')
-      .addOrderBy('transfer.transfer_time', 'DESC');
-    applyQueryConditions(qb, query);
-    const list = await qb.getMany();
-    return list.map((x) => x.toResponseObject());
-  }
-
-  async findPage(
-    query: QueryPageTransferDto,
-    user: { id: any },
-  ): Promise<{ list: TransferEntity[]; count: number }> {
+  getQb(query: QueryPageTransferDto | QueryTransferDto, user: any) {
     const qb = this.transfersRepository
       .createQueryBuilder('transfer')
       .innerJoin('transfer.createUser', 'user')
       .leftJoinAndSelect('transfer.transferFriend', 'friends')
       .where('user.id = :userId', { userId: user.id })
-      .orderBy('transfer.create_time', 'DESC')
-      .addOrderBy('transfer.transfer_time', 'DESC');
-    applyQueryConditions(qb, query);
+      .orderBy('transfer.transfer_time', 'DESC')
+      .addOrderBy('transfer.create_time', 'DESC');
+
+    genWhereConditions(qb, query, 'transfer', ['transferType', 'transferMode']);
+    const { startDate, endDate, friendId } = query;
+    if (startDate && endDate) {
+      qb.andWhere(
+        'transfer.transferTime >= :startDate AND transfer.transferTime <= :endDate',
+        { startDate, endDate },
+      );
+    }
+    if (query.transferTypes) {
+      qb.andWhere('transfer.transferType IN (:...transferType)', {
+        transferType: (query.transferTypes as string).split(','),
+      });
+    }
+    if (friendId) {
+      qb.andWhere(`friends.id = :friendId`, { friendId: query.friendId });
+    }
 
     qb.select([
       'transfer.id',
@@ -94,7 +70,20 @@ export class TransfersService {
       'friends.id', // Include friends' id
       'friends.name', // Include friends' name
     ]);
+    return qb;
+  }
 
+  async findAll(query: QueryTransferDto, user: { id: any }) {
+    const qb = this.getQb(query, user);
+    const list = await qb.getMany();
+    return list.map((x) => x.toResponseObject());
+  }
+
+  async findPage(
+    query: QueryPageTransferDto,
+    user: { id: any },
+  ): Promise<{ list: TransferEntity[]; count: number }> {
+    const qb = this.getQb(query, user);
     const { list, count } = await queryPage(qb, query);
     return {
       list: list.map((x: { toResponseObject: () => any }) =>
