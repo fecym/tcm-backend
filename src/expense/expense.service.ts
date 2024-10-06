@@ -6,7 +6,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpenseEntity } from './entities/expense.entity';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -26,11 +26,14 @@ import { LunarService } from '../lunar/lunar.service';
 import { DateIntervalEnum } from '../enum';
 import { ExpenseTypeDesc } from '../enum/enumDesc';
 import * as dayjs from 'dayjs';
-import { QueryAnalyzeDto, QueryTotalAmountDto } from './dto/query-analyze.dto';
+import { QueryTotalAmountDto } from './dto/query-analyze.dto';
 import { QueryExpenseDto, QueryPageExpenseDto } from './dto/query-expense.dto';
 import { QueryDateRangeDto } from 'src/dto/date.dto';
 
-async function applyQueryConditions(qb, query): Promise<void> {
+async function applyQueryConditions(
+  qb: SelectQueryBuilder<any>,
+  query: Record<string, any> | QueryExpenseDto | QueryPageExpenseDto,
+): Promise<void> {
   if (query.month) {
     const [year, monthNumber] = query.month.split('-').map(Number);
     const startDate = new Date(year, monthNumber - 1, 1);
@@ -39,9 +42,7 @@ async function applyQueryConditions(qb, query): Promise<void> {
   }
 
   if (query.startDate && query.endDate) {
-    const startDate = new Date(query.startDate);
-    const endDate = new Date(query.endDate);
-    genWhereDateRangeConditions(qb, 'expense', startDate, endDate);
+    genWhereDateRangeConditions(qb, 'expense', query.startDate, query.endDate);
   }
 
   if (query.expenseTypes) {
@@ -68,7 +69,7 @@ export class ExpenseService {
 
   async create(
     createExpenseDto: CreateExpenseDto,
-    user,
+    user: { id: any },
   ): Promise<ExpenseEntity> {
     // const exist = await this.expenseRepository.findOne({
     //   where: { createUser: user, date: createExpenseDto.date },
@@ -300,7 +301,6 @@ export class ExpenseService {
   getAnalyzeTotalAmount(query: QueryTotalAmountDto, user: any) {
     const { date, timeUnit } = query;
     const { start, end } = getDateRange(date, timeUnit);
-    console.log(user.id, 'user.id');
     return this.expenseRepository
       .createQueryBuilder('expense')
       .innerJoin('expense.createUser', 'user')

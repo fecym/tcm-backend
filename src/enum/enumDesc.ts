@@ -19,6 +19,7 @@ export const ExpenseTypeDesc: { [key in ExpenseTypeEnum]: string } = {
   [ExpenseTypeEnum.ENTERTAINMENT]: '休闲娱乐',
   [ExpenseTypeEnum.HOTEL]: '酒店旅游',
   [ExpenseTypeEnum.TRANSFER]: '转账红包',
+  [ExpenseTypeEnum.MEDICAL]: '医疗健康',
   [ExpenseTypeEnum.OTHER]: '其他',
 };
 

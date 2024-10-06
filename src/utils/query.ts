@@ -48,6 +48,7 @@ export function genWhereDateRangeConditions(
   startDate: Date,
   endDate: Date,
 ) {
+  // qb.andWhere(`${queryBuilderAlias}.date BETWEEN :startDate AND :endDate`, {
   qb.andWhere(
     `${queryBuilderAlias}.date >= :startDate AND ${queryBuilderAlias}.date < :endDate`,
     {

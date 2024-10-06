@@ -35,7 +35,8 @@ export enum ExpenseTypeEnum {
   HOUSING = '8', // 住房
   HOTEL = '9', // 酒店
   TRANSFER = '10', // 转账
-  OTHER = '11', // 其他
+  MEDICAL = '11', // 医疗
+  OTHER = '12', // 其他
 }
 
 export enum RelationshipEnum {
